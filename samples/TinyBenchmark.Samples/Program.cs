@@ -41,7 +41,11 @@ namespace TinyBenchmark.Samples
             {
                 var sb = new StringBuilder();
 
-                sb.AppendLine($"{conainerReport.Name} ({conainerReport.BenchmarkContainerType.FullName})");
+                if (conainerReport.Name != null)
+                    sb.AppendLine($"Container: {conainerReport.Name} ({conainerReport.BenchmarkContainerType.FullName})");
+                else
+                    sb.AppendLine($"Container: {conainerReport.BenchmarkContainerType.FullName}");
+
                 sb.AppendLine();
                 sb.AppendLine($"Total benchmarks container duration:");
                 sb.AppendLine($"- Started: {conainerReport.StartedAtUtc}");

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TinyBenchmark.Attributes
 {
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public class ParamAttribute : Attribute
     {
         private IEnumerable<object> _values;

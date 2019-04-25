@@ -5,11 +5,9 @@ using System.Threading.Tasks;
 
 namespace TinyBenchmark.Attributes
 {
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-    public class BenchmarkAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    public class BenchmarksContainer : Attribute
     {
         public string Name { get; set; }
-
-        public int Iterations { get; set; }
     }
 }
