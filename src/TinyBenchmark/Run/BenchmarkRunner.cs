@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using TinyBenchmark.Analysis;
+using TinyBenchmark.Attributes;
 
 namespace TinyBenchmark
 {
@@ -28,10 +30,13 @@ namespace TinyBenchmark
         public BenchmarksContainerReport Run(Type benchmarksContainerType, string withName = null)
         {
             var benchmarks = _analyzer.FindAllbenchmarks(benchmarksContainerType);
+            var benchmarksContainerAttribute = benchmarksContainerType
+                .GetCustomAttributes(typeof(BenchmarksContainerAttribute), false)
+                .FirstOrDefault() as BenchmarksContainerAttribute;
 
             var containerReport = new BenchmarksContainerReport
             {
-                Name = withName,
+                Name = benchmarksContainerAttribute?.Name ?? withName,
                 StartedAtUtc = DateTime.UtcNow,
                 Reports = new List<BenchmarkReport>(),
                 BenchmarkContainerType = benchmarksContainerType,
@@ -41,14 +46,7 @@ namespace TinyBenchmark
 
             foreach (var bref in benchmarks)
             {
-                var report = new BenchmarkReport
-                {
-                    StartedAtUtc = DateTime.UtcNow,
-                    Name = bref.Name,
-                };
-
-                RunIterations(bref, benchmarksContainerType, report);
-
+                var report = RunIterations(bref, benchmarksContainerType);
                 containerReport.Reports.Add(report);
             }
 
@@ -59,45 +57,72 @@ namespace TinyBenchmark
             return containerReport;
         }
 
-        private void RunIterations(
+        private BenchmarkReport RunIterations(
             BenchmarkReference bref,
-            Type benchmarksContainerType,
-            BenchmarkReport report)
+            Type benchmarksContainerType)
         {
-            var ticksOfRuns = new List<long>();
-            var exceptions = new List<Exception>();
+            var report = new BenchmarkReport
+            {
+                StartedAtUtc = DateTime.UtcNow,
+                Name = bref.Name,
+                SuccessfulIterations = 0,
+                IterationReports = new List<IterationReport>(),
+            };
 
             for (int i = 0; i < bref.Iterations; i++)
             {
                 GC.Collect();
+                var iterationReport = RunIteration();
+                report.IterationReports.Add(iterationReport);
+            }
+
+            var failedIterationReports = report.IterationReports.Where(ir => ir.Failed).ToList();
+            if (failedIterationReports.Any())
+                report.Exception = new AggregateException(failedIterationReports.Select(ir => ir.Exception));
+
+            var successfulIterationReports = report.IterationReports.Where(ir => ir.Failed == false).ToList();
+            report.SuccessfulIterations = successfulIterationReports.Count;
+            if (successfulIterationReports.Any())
+            {
+                var avgTicks = successfulIterationReports.Sum(ir => ir.Elapsed.Ticks) / successfulIterationReports.Count;
+                report.Elapsed = TimeSpan.FromTicks(avgTicks);
+            }
+
+            return report;
+
+            // Local functions
+
+            IterationReport RunIteration()
+            {
+                var iterationReport = new IterationReport { StartedAtUtc = DateTime.UtcNow, };
 
                 try
                 {
-                    var container = PrepareWarmContainer(bref, benchmarksContainerType, report);
+                    var container = PrepareWarmContainer(bref, benchmarksContainerType, iterationReport);
 
                     var runSW = System.Diagnostics.Stopwatch.StartNew();
                     bref.Executable.Invoke(container, null);
                     runSW.Stop();
 
-                    ticksOfRuns.Add(runSW.ElapsedTicks);
+                    iterationReport.Elapsed = runSW.Elapsed;
+                }
+                catch (TargetInvocationException ex)
+                {
+                    iterationReport.Exception = ex.InnerException;
                 }
                 catch (Exception ex)
                 {
-                    exceptions.Add(ex);
+                    iterationReport.Exception = ex;
                 }
+
+                return iterationReport;
             }
-
-            if (exceptions.Any())
-                report.Exception = new AggregateException(exceptions);
-
-            var avgTicks = ticksOfRuns.Sum(x => x) / ticksOfRuns.Count;
-            report.Elapsed = TimeSpan.FromTicks(avgTicks);
         }
 
         private object PrepareWarmContainer(
             BenchmarkReference bref,
             Type benchmarksContainerType,
-            BenchmarkReport report)
+            IterationReport iterationReport)
         {            
             var constructorWithParameters = benchmarksContainerType.GetConstructors().FirstOrDefault(c =>
             {
@@ -120,6 +145,9 @@ namespace TinyBenchmark
 
             foreach (var warmup in bref.Warmups)
                 warmup.Invoke(container, null);
+
+            warmupSW.Stop();
+            iterationReport.Warmup = warmupSW.Elapsed;
 
             return container;
         }

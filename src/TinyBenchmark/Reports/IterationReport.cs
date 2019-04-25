@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TinyBenchmark
 {
-    public class BenchmarkReport
+    public class IterationReport
     {
         public DateTime StartedAtUtc { get; internal set; }
 
@@ -13,14 +13,8 @@ namespace TinyBenchmark
 
         public TimeSpan Elapsed { get; internal set; }
 
-        public string Name { get; internal set; }
-
-        public int SuccessfulIterations { get; internal set; }
-
         public bool Failed => this.Exception != null;
 
-        public AggregateException Exception { get; set; }
-
-        public List<IterationReport> IterationReports { get; set; }
+        public Exception Exception { get; set; }
     }
 }

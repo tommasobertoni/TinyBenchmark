@@ -29,7 +29,7 @@ namespace TinyBenchmark.Analysis
                 .Where(x => x.attribute != null)
                 .ToList();
 
-            var references = benchmarkMethods.Select(CreateReference).ToList();
+            var references = benchmarkMethods.OrderBy(x => x.attribute.Order).Select(CreateReference).ToList();
             return references;
 
             // Local functions

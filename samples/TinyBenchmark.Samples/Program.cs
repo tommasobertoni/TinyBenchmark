@@ -11,10 +11,10 @@ namespace TinyBenchmark.Samples
             var sequenceReport = new BenchmarkRunner()
                 .InSequence(config => config
                     .Append<LinqBenchmarks>()
-                    .Append<LinqBenchmarks>())
+                    .Append<CollectionsBenchmarks>()
+                    .Append<MiscBenchmarks>())
                 .Run();
 
-            Console.WriteLine($"{Environment.NewLine}[Sequence]{Environment.NewLine}");
             PrettyPrint(sequenceReport);
 
             Console.Write($"{Environment.NewLine}Press ENTER to exit...");
@@ -26,7 +26,7 @@ namespace TinyBenchmark.Samples
             {
                 const string separator = "------------------------------";
 
-                Console.WriteLine($"Executed {preport.ContainerReports.Sum(x => x.Reports.Count)} benchmarks in parallel, in {preport.ContainerReports.Count} containers,");
+                Console.WriteLine($"Executed {preport.ContainerReports.Sum(x => x.Reports.Count)} benchmarks, in {preport.ContainerReports.Count} containers,");
                 Console.WriteLine($"execution completed in {preport.Elapsed}{Environment.NewLine}");
 
                 var formatterContainers = preport.ContainerReports.Select(StringifyContainer);
@@ -67,15 +67,40 @@ namespace TinyBenchmark.Samples
                 var sb = new StringBuilder();
 
                 if (report.Name != null)
-                    sb.AppendLine($"  {report.Name}");
+                {
+                    if (report.IterationReports.Count == 1)
+                        sb.AppendLine($"  {report.Name}");
+                    else
+                    {
+                        if (report.IterationReports.Count == report.SuccessfulIterations)
+                            sb.AppendLine($"  {report.Name}: {report.SuccessfulIterations} iterations");
+                        else
+                        {
+                            var successPercentage = report.SuccessfulIterations * 100.0 / report.IterationReports.Count;
+                            sb.AppendLine($"  {report.Name}: {report.SuccessfulIterations} successful iterations of {report.IterationReports.Count} total iterations ({successPercentage}%)");
+                        }
+                    }
+                }
 
                 sb.AppendLine($"  - Started: {report.StartedAtUtc}");
+                sb.AppendLine($"  - Warmup:  {report.Warmup}");
                 sb.AppendLine($"  - Elapsed: {report.Elapsed}");
 
-                if (report.Failed)
+                var successfulIterationReports = report.IterationReports.Where(ir => ir.Failed == false).ToList();
+                if (successfulIterationReports.Count > 1)
                 {
-                    sb.AppendLine();
-                    sb.AppendLine($"  Exception: {report.Exception}");
+                    var allElapsedTimes = successfulIterationReports.Select(ir => ir.Elapsed);
+                    sb.AppendLine($"  - Elapsed of each iteration:");
+                    foreach (var t in allElapsedTimes)
+                        sb.AppendLine($"             {t}");
+                }
+
+                var failedIterationReports = report.IterationReports.Where(ir => ir.Failed).ToList();
+                if (failedIterationReports.Any())
+                {
+                    sb.AppendLine($"  - Failed iterations: {failedIterationReports.Count}");
+                    foreach (var ir in failedIterationReports)
+                        sb.AppendLine($"    {ir.Exception?.Message}");
                 }
 
                 return sb.ToString();

@@ -6,7 +6,7 @@ using TinyBenchmark.Attributes;
 
 namespace TinyBenchmark.Samples
 {
-    [BenchmarksContainer(Name = "Linq benchmarks")]
+    [BenchmarksContainerAttribute(Name = "Linq benchmarks")]
     public class LinqBenchmarks
     {
         private const string FindMe = "FindMe";
@@ -14,7 +14,7 @@ namespace TinyBenchmark.Samples
         private readonly IBenchmarkOutput _output;
 
         [Param(10_000_000)]
-        public int N { get; set; }
+        public int N { get; set; } = 10_000_000; // TODO: make ParamAttribute work
 
         public LinqBenchmarks(IBenchmarkOutput output)
         {
@@ -37,7 +37,7 @@ namespace TinyBenchmark.Samples
         }
 
         [WarmupWith(nameof(AnotherWarmupForLinqFirst), Order = 2)]
-        [Benchmark(Name = "Using Linq.First", Iterations = 5)]
+        [Benchmark(Name = "Using Linq.First", Iterations = 2)]
         public void First()
         {
             _output.WriteLine($"Invoked {nameof(First)}");
@@ -58,7 +58,7 @@ namespace TinyBenchmark.Samples
         }
 
         [WarmupWith(nameof(AnotherWarmupForLinqSingle), Order = 1)]
-        [Benchmark(Name = "Using Linq.Single", Iterations = 5)]
+        [Benchmark(Name = "Using Linq.Single", Iterations = 2)]
         public void Single()
         {
             _output.WriteLine($"Invoked {nameof(Single)}");
