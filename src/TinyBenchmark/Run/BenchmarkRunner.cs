@@ -69,11 +69,14 @@ namespace TinyBenchmark
                 IterationReports = new List<IterationReport>(),
             };
 
-            for (int i = 0; i < bref.Iterations; i++)
+            if (bref.ParametersSetCollection?.Any() == true)
             {
-                GC.Collect();
-                var iterationReport = RunIteration();
-                report.IterationReports.Add(iterationReport);
+                foreach (var parameterSet in bref.ParametersSetCollection)
+                    RunBenchmarkIterationsWithParameterSet(parameterSet);
+            }
+            else
+            {
+                RunBenchmarkIterationsWithParameterSet(null);
             }
 
             var failedIterationReports = report.IterationReports.Where(ir => ir.Failed).ToList();
@@ -84,21 +87,38 @@ namespace TinyBenchmark
             report.SuccessfulIterations = successfulIterationReports.Count;
             if (successfulIterationReports.Any())
             {
-                var avgTicks = successfulIterationReports.Sum(ir => ir.Elapsed.Ticks) / successfulIterationReports.Count;
-                report.Elapsed = TimeSpan.FromTicks(avgTicks);
+                var avgElapsedTicks = successfulIterationReports.Sum(ir => ir.Elapsed.Ticks) / successfulIterationReports.Count;
+                report.Elapsed = TimeSpan.FromTicks(avgElapsedTicks);
+
+                var avgWarmupTicks = successfulIterationReports.Sum(ir => ir.Warmup.Ticks) / successfulIterationReports.Count;
+                report.Warmup = TimeSpan.FromTicks(avgWarmupTicks);
             }
 
             return report;
 
             // Local functions
 
-            IterationReport RunIteration()
+            void RunBenchmarkIterationsWithParameterSet(ParametersSet parameterSet)
             {
-                var iterationReport = new IterationReport { StartedAtUtc = DateTime.UtcNow, };
+                for (int i = 0; i < bref.Iterations; i++)
+                {
+                    GC.Collect();
+                    var iterationReport = RunIteration(parameterSet);
+                    report.IterationReports.Add(iterationReport);
+                }
+            }
+
+            IterationReport RunIteration(ParametersSet parametersSet)
+            {
+                var iterationReport = new IterationReport
+                {
+                    StartedAtUtc = DateTime.UtcNow,
+                    Parameters = parametersSet?.ToParameterValues(),
+                };
 
                 try
                 {
-                    var container = PrepareWarmContainer(bref, benchmarksContainerType, iterationReport);
+                    var container = PrepareWarmContainer(bref, benchmarksContainerType, parametersSet, iterationReport);
 
                     var runSW = System.Diagnostics.Stopwatch.StartNew();
                     bref.Executable.Invoke(container, null);
@@ -122,6 +142,7 @@ namespace TinyBenchmark
         private object PrepareWarmContainer(
             BenchmarkReference bref,
             Type benchmarksContainerType,
+            ParametersSet parametersSet,
             IterationReport iterationReport)
         {            
             var constructorWithParameters = benchmarksContainerType.GetConstructors().FirstOrDefault(c =>
@@ -139,14 +160,24 @@ namespace TinyBenchmark
 
             var warmupSW = System.Diagnostics.Stopwatch.StartNew();
 
+            // Create
+
             var container = constructorWithParameters == null
                 ? Activator.CreateInstance(benchmarksContainerType)
                 : constructorWithParameters.Invoke(new[] { new BenchmarkOutput(this) });
+
+            // Init
+
+            parametersSet?.ApplyTo(container);
+            bref.Init?.Invoke(container, null);
+
+            // Warm up
 
             foreach (var warmup in bref.Warmups)
                 warmup.Invoke(container, null);
 
             warmupSW.Stop();
+
             iterationReport.Warmup = warmupSW.Elapsed;
 
             return container;

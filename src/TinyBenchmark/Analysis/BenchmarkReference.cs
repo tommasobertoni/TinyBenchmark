@@ -10,10 +10,14 @@ namespace TinyBenchmark.Analysis
     {
         public string Name { get; internal set; }
 
+        public MethodInfo Init { get; set; }
+
         public MethodInfo Executable { get; internal set; }
 
         public int Iterations { get; internal set; }
 
         public List<MethodInfo> Warmups { get; set; }
+
+        public ParametersSetCollection ParametersSetCollection { get; set; }
     }
 }

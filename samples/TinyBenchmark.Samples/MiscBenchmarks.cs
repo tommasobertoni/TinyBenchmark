@@ -8,12 +8,10 @@ namespace TinyBenchmark.Samples
 {
     public class MiscBenchmarks
     {
-        private readonly IBenchmarkOutput _output;
         private static int _iterationCount = 0;
 
-        public MiscBenchmarks(IBenchmarkOutput output)
+        public MiscBenchmarks()
         {
-            _output = output;
         }
 
         [Benchmark(Iterations = 5)]

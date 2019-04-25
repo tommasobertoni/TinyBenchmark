@@ -26,7 +26,9 @@ namespace TinyBenchmark.Samples
             {
                 const string separator = "------------------------------";
 
-                Console.WriteLine($"Executed {preport.ContainerReports.Sum(x => x.Reports.Count)} benchmarks, in {preport.ContainerReports.Count} containers,");
+                Console.WriteLine($"Executed {preport.ContainerReports.Sum(x => x.Reports.Count)} benchmarks");
+                Console.WriteLine($"with a total of {preport.ContainerReports.Sum(x => x.Reports.Sum(r => r.IterationReports.Count))} iterations");
+                Console.WriteLine($"in {preport.ContainerReports.Count} containers");
                 Console.WriteLine($"execution completed in {preport.Elapsed}{Environment.NewLine}");
 
                 var formatterContainers = preport.ContainerReports.Select(StringifyContainer);
@@ -83,16 +85,28 @@ namespace TinyBenchmark.Samples
                 }
 
                 sb.AppendLine($"  - Started: {report.StartedAtUtc}");
-                sb.AppendLine($"  - Warmup:  {report.Warmup}");
+
+                if (report.Warmup > TimeSpan.FromMilliseconds(1))
+                    sb.AppendLine($"  - Warmup:  {report.Warmup}");
+
                 sb.AppendLine($"  - Elapsed: {report.Elapsed}");
 
                 var successfulIterationReports = report.IterationReports.Where(ir => ir.Failed == false).ToList();
                 if (successfulIterationReports.Count > 1)
                 {
-                    var allElapsedTimes = successfulIterationReports.Select(ir => ir.Elapsed);
                     sb.AppendLine($"  - Elapsed of each iteration:");
-                    foreach (var t in allElapsedTimes)
-                        sb.AppendLine($"             {t}");
+                    foreach (var ir in successfulIterationReports)
+                    {
+                        if (ir.Parameters?.Any() == true)
+                        {
+                            var parametersStrings = ir.Parameters.Select(p => $"{p.PropertyName}:{p.Value}");
+                            sb.AppendLine($"             {ir.Elapsed} with parameters: {string.Join(", ", parametersStrings)}");
+                        }
+                        else
+                        {
+                            sb.AppendLine($"             {ir.Elapsed}");
+                        }
+                    }
                 }
 
                 var failedIterationReports = report.IterationReports.Where(ir => ir.Failed).ToList();

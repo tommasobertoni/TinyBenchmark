@@ -8,16 +8,24 @@ namespace TinyBenchmark.Attributes
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public class ParamAttribute : Attribute
     {
-        private IEnumerable<object> _values;
+        internal List<object> Values { get; }
 
-        public ParamAttribute(params object[] values)
-            : this(values.AsEnumerable())
+        public ParamAttribute(object value)
+            : this(new[] { value })
+        {
+        }
+
+        public ParamAttribute(object value, params object[] otherValues)
+            : this(new[] { value }.Concat(otherValues))
         {
         }
 
         public ParamAttribute(IEnumerable<object> values)
         {
-            _values = values;
+            if (values?.Any() != true)
+                throw new ArgumentException($"There must be some values.");
+
+            this.Values = values.ToList();
         }
     }
 }

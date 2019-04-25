@@ -6,62 +6,47 @@ using TinyBenchmark.Attributes;
 
 namespace TinyBenchmark.Samples
 {
-    [BenchmarksContainerAttribute(Name = "Linq benchmarks")]
+    [BenchmarksContainer(Name = "Linq benchmarks")]
     public class LinqBenchmarks
     {
         private const string FindMe = "FindMe";
         private readonly List<string> _dataSet = new List<string>();
-        private readonly IBenchmarkOutput _output;
 
         [Param(10_000_000)]
-        public int N { get; set; } = 10_000_000; // TODO: make ParamAttribute work
+        public int ListSize { get; set; }
 
-        public LinqBenchmarks(IBenchmarkOutput output)
+        [Init]
+        public void Init()
         {
-            _output = output;
-            Enumerable.Range(1, N).ToList().ForEach(x => _dataSet.Add(x.ToString()));
+            Enumerable.Range(1, ListSize).ToList().ForEach(x => _dataSet.Add(x.ToString()));
             _dataSet.Insert(_dataSet.Count / 2, FindMe);
         }
 
         // First
 
         [Warmup(ForBenchmark = "Using Linq.First", Order = 1)]
-        public void WarmupForLinqFirst()
-        {
-            _output.WriteLine($"Invoked {nameof(WarmupForLinqFirst)}");
-        }
+        public void WarmupForLinqFirst() { }
 
-        public void AnotherWarmupForLinqFirst()
-        {
-            _output.WriteLine($"Invoked {nameof(AnotherWarmupForLinqFirst)}");
-        }
+        public void AnotherWarmupForLinqFirst() { }
 
         [WarmupWith(nameof(AnotherWarmupForLinqFirst), Order = 2)]
         [Benchmark(Name = "Using Linq.First", Iterations = 2)]
         public void First()
         {
-            _output.WriteLine($"Invoked {nameof(First)}");
             var foundItem = _dataSet.First(x => x == FindMe);
         }
 
         // Single
 
         [Warmup(ForBenchmark = "Using Linq.Single", Order = 2)]
-        public void WarmupForLinqSingle()
-        {
-            _output.WriteLine($"Invoked {nameof(WarmupForLinqSingle)}");
-        }
+        public void WarmupForLinqSingle() { }
 
-        public void AnotherWarmupForLinqSingle()
-        {
-            _output.WriteLine($"Invoked {nameof(AnotherWarmupForLinqSingle)}");
-        }
+        public void AnotherWarmupForLinqSingle() { }
 
         [WarmupWith(nameof(AnotherWarmupForLinqSingle), Order = 1)]
         [Benchmark(Name = "Using Linq.Single", Iterations = 2)]
         public void Single()
         {
-            _output.WriteLine($"Invoked {nameof(Single)}");
             var foundItem = _dataSet.Single(x => x == FindMe);
         }
     }

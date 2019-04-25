@@ -7,22 +7,11 @@ using TinyBenchmark.Attributes;
 
 namespace TinyBenchmark.Samples
 {
-    [BenchmarksContainerAttribute(Name = "Collections increase capacity benchmarks")]
+    [BenchmarksContainer(Name = "Collections increase capacity benchmarks")]
     public class CollectionsBenchmarks
     {
         [Param(10_000, 1_000_000, 10_000_000)]
-        public int N { get; set; } = 10_000_000; // TODO: make ParamAttribute work
-
-        public CollectionsBenchmarks(IBenchmarkOutput output)
-        {
-            _output = output;
-        }
-
-        private void PrintMe([CallerMemberName] string executing = null)
-        {
-            if (executing != null)
-                _output.WriteLine(executing);
-        }
+        public int ItemsCount { get; set; }
 
         // List
 
@@ -34,9 +23,7 @@ namespace TinyBenchmark.Samples
         [Benchmark(Order = 1)]
         public void List()
         {
-            PrintMe();
-
-            for (int i = 0; i < this.N; i++)
+            for (int i = 0; i < this.ItemsCount; i++)
                 _list.Add(i);
         }
 
@@ -50,9 +37,7 @@ namespace TinyBenchmark.Samples
         [Benchmark(Order = 5, Iterations = 2)]
         public void LinkedList()
         {
-            PrintMe();
-
-            for (int i = 0; i < this.N; i++)
+            for (int i = 0; i < this.ItemsCount; i++)
                 _linked.AddLast(i);
         }
 
@@ -66,9 +51,7 @@ namespace TinyBenchmark.Samples
         [Benchmark(Order = 4)]
         public void Queue()
         {
-            PrintMe();
-
-            for (int i = 0; i < this.N; i++)
+            for (int i = 0; i < this.ItemsCount; i++)
                 _queue.Enqueue(i);
         }
 
@@ -82,9 +65,7 @@ namespace TinyBenchmark.Samples
         [Benchmark(Order = 3, Iterations = 3)]
         public void Stack()
         {
-            PrintMe();
-
-            for (int i = 0; i < this.N; i++)
+            for (int i = 0; i < this.ItemsCount; i++)
                 _stack.Push(i);
         }
 
@@ -99,9 +80,7 @@ namespace TinyBenchmark.Samples
         [Benchmark(Order = 2, Iterations = 2)]
         public void HashSet()
         {
-            PrintMe();
-
-            for (int i = 0; i < this.N; i++)
+            for (int i = 0; i < this.ItemsCount; i++)
                 _hashSet.Add(i);
         }
     }
