@@ -113,7 +113,7 @@ namespace TinyBenchmark
                 var iterationReport = new IterationReport
                 {
                     StartedAtUtc = DateTime.UtcNow,
-                    Parameters = parametersSet?.ToParameterValues(),
+                    Parameters = parametersSet?.ToParametersModel(),
                 };
 
                 try

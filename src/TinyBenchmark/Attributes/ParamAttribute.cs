@@ -20,7 +20,7 @@ namespace TinyBenchmark.Attributes
         {
         }
 
-        public ParamAttribute(IEnumerable<object> values)
+        internal ParamAttribute(IEnumerable<object> values)
         {
             if (values?.Any() != true)
                 throw new ArgumentException($"There must be some values.");

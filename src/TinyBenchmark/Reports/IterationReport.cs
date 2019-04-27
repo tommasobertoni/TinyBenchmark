@@ -15,8 +15,8 @@ namespace TinyBenchmark
 
         public bool Failed => this.Exception != null;
 
-        public Exception Exception { get; set; }
+        public Exception Exception { get; internal set; }
 
-        public List<ParameterValue> Parameters { get; set; }
+        public Parameters Parameters { get; internal set; }
     }
 }

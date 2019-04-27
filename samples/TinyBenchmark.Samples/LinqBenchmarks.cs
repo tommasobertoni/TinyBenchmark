@@ -30,7 +30,7 @@ namespace TinyBenchmark.Samples
         public void AnotherWarmupForLinqFirst() { }
 
         [WarmupWith(nameof(AnotherWarmupForLinqFirst), Order = 2)]
-        [Benchmark(Name = "Using Linq.First", Iterations = 2)]
+        [Benchmark(Name = "Using Linq.First", Iterations = 3)]
         public void First()
         {
             var foundItem = _dataSet.First(x => x == FindMe);
@@ -44,7 +44,7 @@ namespace TinyBenchmark.Samples
         public void AnotherWarmupForLinqSingle() { }
 
         [WarmupWith(nameof(AnotherWarmupForLinqSingle), Order = 1)]
-        [Benchmark(Name = "Using Linq.Single", Iterations = 2)]
+        [Benchmark(Name = "Using Linq.Single", Iterations = 3)]
         public void Single()
         {
             var foundItem = _dataSet.Single(x => x == FindMe);

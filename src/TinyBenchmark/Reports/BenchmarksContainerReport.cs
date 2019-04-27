@@ -7,7 +7,7 @@ namespace TinyBenchmark
 {
     public class BenchmarksContainerReport
     {
-        public string Name { get; set; }
+        public string Name { get; internal set; }
 
         public Type BenchmarkContainerType { get; internal set; }
 

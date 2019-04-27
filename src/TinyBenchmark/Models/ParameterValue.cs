@@ -7,8 +7,8 @@ namespace TinyBenchmark
 {
     public class ParameterValue
     {
-        public string PropertyName { get; set; }
+        public string PropertyName { get; internal set; }
 
-        public object Value { get; set; }
+        public object Value { get; internal set; }
     }
 }

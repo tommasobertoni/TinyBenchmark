@@ -17,8 +17,11 @@ namespace TinyBenchmark.Samples
 
             PrettyPrint(sequenceReport);
 
-            Console.Write($"{Environment.NewLine}Press ENTER to exit...");
-            Console.ReadLine();
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                Console.Write($"{Environment.NewLine}Press ENTER to exit...");
+                Console.ReadLine();
+            }
 
             // Local functions
 
@@ -31,7 +34,7 @@ namespace TinyBenchmark.Samples
                 Console.WriteLine($"in {preport.ContainerReports.Count} containers");
                 Console.WriteLine($"execution completed in {preport.Elapsed}{Environment.NewLine}");
 
-                var formatterContainers = preport.ContainerReports.Select(StringifyContainer);
+                var formatterContainers = preport.ContainerReports.Select(cr => StringifyContainer(cr, groupByParameters: true));
                 var combined = string.Join($"{Environment.NewLine}{separator}{Environment.NewLine}", formatterContainers);
 
                 Console.WriteLine(separator);
@@ -39,32 +42,79 @@ namespace TinyBenchmark.Samples
                 Console.WriteLine(separator);
             }
 
-            string StringifyContainer(BenchmarksContainerReport conainerReport)
+            string StringifyContainer(BenchmarksContainerReport containerReport, bool groupByParameters)
             {
                 var sb = new StringBuilder();
 
-                if (conainerReport.Name != null)
-                    sb.AppendLine($"Container: {conainerReport.Name} ({conainerReport.BenchmarkContainerType.FullName})");
+                if (containerReport.Name != null)
+                    sb.AppendLine($"Container: {containerReport.Name} ({containerReport.BenchmarkContainerType.FullName})");
                 else
-                    sb.AppendLine($"Container: {conainerReport.BenchmarkContainerType.FullName}");
+                    sb.AppendLine($"Container: {containerReport.BenchmarkContainerType.FullName}");
 
                 sb.AppendLine();
                 sb.AppendLine($"Total benchmarks container duration:");
-                sb.AppendLine($"- Started: {conainerReport.StartedAtUtc}");
-                sb.AppendLine($"- Elapsed: {conainerReport.Elapsed}");
+                sb.AppendLine($"- Started: {containerReport.StartedAtUtc.ToLocalTime()}");
+                sb.AppendLine($"- Elapsed: {containerReport.Elapsed}");
 
-                if (conainerReport.Reports?.Any() == true)
+                if (containerReport.Reports?.Any() == true)
                 {
                     sb.AppendLine();
-                    var formattedReports = conainerReport.Reports.Select(Stringify);
-                    var combined = string.Join($"{Environment.NewLine}", formattedReports);
-                    sb.AppendLine(combined);
+
+                    if (groupByParameters)
+                    {
+                        var formattedReportNames = containerReport.Reports.Select(StringifyName);
+                        var combinedNames = string.Join($"", formattedReportNames);
+                        sb.AppendLine($"- Benchmarks:");
+                        sb.AppendLine(combinedNames);
+
+                        var allParametersSets = containerReport.Reports
+                            .SelectMany(r => r.IterationReports.Select(ir => ir.Parameters))
+                            .ToHashSet();
+
+                        foreach (var p in allParametersSets)
+                        {
+                            if (p == null)
+                                sb.AppendLine($"  Benchmarks without parameters {Environment.NewLine}");
+                            else
+                                sb.AppendLine($"  Benchmarks with parameters: {p}{Environment.NewLine}");
+
+                            foreach (var report in containerReport.Reports)
+                            {
+                                var iterationsWithParameters = report.IterationReports.Where(ir => ir.Parameters == p);
+                                var successfulIterations = iterationsWithParameters.Where(ir => ir.Failed == false);
+                                var failedIterations = iterationsWithParameters.Where(ir => ir.Failed);
+
+                                sb.AppendLine($"    Iterations of benchmark: {report.Name}");
+
+                                foreach (var ir in successfulIterations)
+                                {
+                                    sb.AppendLine($"    - Elapsed: {ir.Elapsed}");
+
+                                    //sb.AppendLine($"        Started: {ir.StartedAtUtc.ToLocalTime()}");
+
+                                    //if (report.Warmup > TimeSpan.FromMilliseconds(1))
+                                    //    sb.AppendLine($"        Warmup:  {ir.Warmup}");
+                                }
+
+                                if (failedIterations.Any())
+                                    sb.AppendLine($"    - Failed iterations: {failedIterations.Count()}");
+
+                                sb.AppendLine();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var formattedReports = containerReport.Reports.Select(Stringify);
+                        var combined = string.Join($"{Environment.NewLine}", formattedReports);
+                        sb.AppendLine(combined);
+                    }
                 }
 
                 return sb.ToString();
             }
 
-            string Stringify(BenchmarkReport report)
+            string StringifyName(BenchmarkReport report)
             {
                 var sb = new StringBuilder();
 
@@ -84,7 +134,14 @@ namespace TinyBenchmark.Samples
                     }
                 }
 
-                sb.AppendLine($"  - Started: {report.StartedAtUtc}");
+                return sb.ToString();
+            }
+
+            string Stringify(BenchmarkReport report)
+            {
+                var sb = new StringBuilder();
+                sb.Append(StringifyName(report));
+                sb.AppendLine($"  - Started: {report.StartedAtUtc.ToLocalTime()}");
 
                 if (report.Warmup > TimeSpan.FromMilliseconds(1))
                     sb.AppendLine($"  - Warmup:  {report.Warmup}");
@@ -97,9 +154,9 @@ namespace TinyBenchmark.Samples
                     sb.AppendLine($"  - Elapsed of each iteration:");
                     foreach (var ir in successfulIterationReports)
                     {
-                        if (ir.Parameters?.Any() == true)
+                        if (ir.Parameters.Values?.Any() == true)
                         {
-                            var parametersStrings = ir.Parameters.Select(p => $"{p.PropertyName}:{p.Value}");
+                            var parametersStrings = ir.Parameters.Values.Select(p => $"{p.PropertyName}:{p.Value}");
                             sb.AppendLine($"             {ir.Elapsed} with parameters: {string.Join(", ", parametersStrings)}");
                         }
                         else

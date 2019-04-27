@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TinyBenchmark.Analysis
 {
-    public class ParametersSet
+    internal class ParametersSet
     {
         public object this[PropertyInfo property]
         {
@@ -34,20 +34,13 @@ namespace TinyBenchmark.Analysis
                 property.SetValue(container, value);
         }
 
-        public List<ParameterValue> ToParameterValues()
+        public Parameters ToParametersModel()
         {
-            return _valuesMap.Values.Select(x => new ParameterValue
+            return new Parameters(_valuesMap.Values.Select(x => new ParameterValue
             {
                 PropertyName = x.property.Name,
                 Value = x.value
-            }).ToList();
-        }
-
-        public override string ToString()
-        {
-            var toStrings = _valuesMap.Values.Select(x => $"{x.property.Name}:{x.value}");
-            var toString = string.Join(", ", toStrings);
-            return toString;
+            }));
         }
     }
 }

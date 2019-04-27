@@ -19,8 +19,8 @@ namespace TinyBenchmark
 
         public bool Failed => this.Exception != null;
 
-        public AggregateException Exception { get; set; }
+        public AggregateException Exception { get; internal set; }
 
-        public List<IterationReport> IterationReports { get; set; }
+        public List<IterationReport> IterationReports { get; internal set; }
     }
 }
