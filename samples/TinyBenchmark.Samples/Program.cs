@@ -88,7 +88,12 @@ namespace TinyBenchmark.Samples
 
                                 foreach (var ir in successfulIterations)
                                 {
-                                    sb.AppendLine($"    - Elapsed: {ir.Elapsed}");
+                                    if (ir.Arguments?.Any() == true)
+                                    {
+                                        var argumentsToString = string.Join(", ", ir.Arguments.Select(a => $"{a.VariableName}:{a.Value}"));
+                                        sb.AppendLine($"    - Elapsed: {ir.Elapsed}, with arguments: {argumentsToString}");
+                                    }
+                                    else sb.AppendLine($"    - Elapsed: {ir.Elapsed}");
 
                                     //sb.AppendLine($"        Started: {ir.StartedAtUtc.ToLocalTime()}");
 

@@ -14,6 +14,8 @@ namespace TinyBenchmark.Analysis
 
         public MethodInfo Executable { get; internal set; }
 
+        public List<BenchmarkArguments> ArgumentsCollection { get; set; }
+
         public int Iterations { get; internal set; }
 
         public List<MethodInfo> Warmups { get; set; }

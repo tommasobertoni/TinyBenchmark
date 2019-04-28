@@ -17,6 +17,8 @@ namespace TinyBenchmark
 
         public Exception Exception { get; internal set; }
 
+        public List<Argument> Arguments { get; set; }
+
         public Parameters Parameters { get; internal set; }
     }
 }

@@ -67,6 +67,39 @@ namespace TinyBenchmark.Analysis
                     }
                 }
 
+                var argumentsCollection = new List<BenchmarkArguments>();
+                var argumentsAttributes = executable.GetCustomAttributes<ArgumentsAttribute>();
+                if (argumentsAttributes.Any())
+                {
+                    var methodParameters = executable.GetParameters().ToList();
+                    foreach (var argumentsAttribute in argumentsAttributes)
+                    {
+                        var args = argumentsAttribute.Arguments;
+                        var argsToString = string.Join(", ", args.Select(x => x.ToString()));
+
+                        if (methodParameters?.Any() != true && args.Any())
+                            throw new ArgumentException($"Mismatching arguments on method {executable.DeclaringType.Name}.{executable.Name}, arguments: {argsToString}");
+
+                        if (methodParameters.Count != args.Count)
+                            throw new ArgumentException($"Mismatching arguments on method {executable.DeclaringType.Name}.{executable.Name}, arguments: {argsToString}");
+
+                        var benchmarkAttributes = new BenchmarkArguments();
+
+                        for (int i = 0; i < methodParameters.Count; i++)
+                        {
+                            var methodParameter = methodParameters[i];
+                            var arg = args[i];
+
+                            if (!methodParameter.ParameterType.IsAssignableFrom(arg.GetType()))
+                                throw new ArgumentException($"Mismatching arguments on method {executable.DeclaringType.Name}.{executable.Name}, arguments: {argsToString}");
+
+                            benchmarkAttributes.Add(methodParameter.Name, arg);
+                        }
+
+                        argumentsCollection.Add(benchmarkAttributes);
+                    }
+                }
+
                 var orderedWarmups = warmups.OrderBy(x => x.order).Select(x => x.warmup).ToList();
 
                 var parametersSetCollection = new ParametersSetCollection(benchmarksContainerType);
@@ -77,6 +110,7 @@ namespace TinyBenchmark.Analysis
                     Executable = executable,
                     Name = benchmarkName,
                     Iterations = Math.Max(1, attribute.Iterations),
+                    ArgumentsCollection = argumentsCollection,
                     Warmups = orderedWarmups,
                     ParametersSetCollection = parametersSetCollection,
                 };

@@ -10,8 +10,19 @@ namespace TinyBenchmark.Samples
     {
         private static int _iterationCount = 0;
 
-        public MiscBenchmarks()
+        private readonly IBenchmarkOutput _output;
+
+        public MiscBenchmarks(IBenchmarkOutput output)
         {
+            _output = output;
+        }
+
+        [Benchmark(Iterations = 2)]
+        [Arguments("test", 1)]
+        [Arguments("another", 2)]
+        public void WithArguments(string text, int n)
+        {
+            _output.WriteLine($"{text}-{n}");
         }
 
         [Benchmark(Iterations = 5)]

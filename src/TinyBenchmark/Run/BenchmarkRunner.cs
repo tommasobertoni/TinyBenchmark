@@ -24,8 +24,7 @@ namespace TinyBenchmark
             return config;
         }
 
-        public BenchmarksContainerReport Run<TBenchmarksContainer>() where TBenchmarksContainer : new() =>
-            this.Run(typeof(TBenchmarksContainer));
+        public BenchmarksContainerReport Run<TBenchmarksContainer>() => this.Run(typeof(TBenchmarksContainer));
 
         public BenchmarksContainerReport Run(Type benchmarksContainerType, string withName = null)
         {
@@ -71,12 +70,12 @@ namespace TinyBenchmark
 
             if (bref.ParametersSetCollection?.Any() == true)
             {
-                foreach (var parameterSet in bref.ParametersSetCollection)
-                    RunBenchmarkIterationsWithParameterSet(parameterSet);
+                foreach (var parametersSet in bref.ParametersSetCollection)
+                    RunBenchmarkIterationsWithParametersSet(parametersSet);
             }
             else
             {
-                RunBenchmarkIterationsWithParameterSet(null);
+                RunBenchmarkIterationsWithParametersSet(null);
             }
 
             var failedIterationReports = report.IterationReports.Where(ir => ir.Failed).ToList();
@@ -98,22 +97,33 @@ namespace TinyBenchmark
 
             // Local functions
 
-            void RunBenchmarkIterationsWithParameterSet(ParametersSet parameterSet)
+            void RunBenchmarkIterationsWithParametersSet(ParametersSet parametersSet)
+            {
+                if (bref.ArgumentsCollection?.Any() == true)
+                {
+                    foreach (var args in bref.ArgumentsCollection)
+                        RunBenchmarkIterationsWithParametersSetAndArguments(parametersSet, args);
+                }
+                else RunBenchmarkIterationsWithParametersSetAndArguments(parametersSet, null);
+            }
+
+            void RunBenchmarkIterationsWithParametersSetAndArguments(ParametersSet parametersSet, BenchmarkArguments arguments)
             {
                 for (int i = 0; i < bref.Iterations; i++)
                 {
                     GC.Collect();
-                    var iterationReport = RunIteration(parameterSet);
+                    var iterationReport = RunIteration(parametersSet, arguments);
                     report.IterationReports.Add(iterationReport);
                 }
             }
 
-            IterationReport RunIteration(ParametersSet parametersSet)
+            IterationReport RunIteration(ParametersSet parametersSet, BenchmarkArguments arguments)
             {
                 var iterationReport = new IterationReport
                 {
                     StartedAtUtc = DateTime.UtcNow,
                     Parameters = parametersSet?.ToParametersModel(),
+                    Arguments = arguments?.ToArgumentsModel(),
                 };
 
                 try
@@ -121,7 +131,8 @@ namespace TinyBenchmark
                     var container = PrepareWarmContainer(bref, benchmarksContainerType, parametersSet, iterationReport);
 
                     var runSW = System.Diagnostics.Stopwatch.StartNew();
-                    bref.Executable.Invoke(container, null);
+                    var methodParameters = arguments?.AsMethodParameters();
+                    bref.Executable.Invoke(container, methodParameters);
                     runSW.Stop();
 
                     iterationReport.Elapsed = runSW.Elapsed;
