@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.28822.285
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{5F8B1430-1097-4C69-9592-8F87B310C2C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyBenchmark.Samples", "samples\TinyBenchmark.Samples\TinyBenchmark.Samples.csproj", "{3802364C-F77C-4FC5-B9CF-B4A8D3759C70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyBenchmark.Samples", "samples\TinyBenchmark.Samples\TinyBenchmark.Samples.csproj", "{3802364C-F77C-4FC5-B9CF-B4A8D3759C70}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E213A7B9-F36C-4E40-BA04-06DE7B994EE7}"
 	ProjectSection(SolutionItems) = preProject
@@ -15,7 +15,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nuget", "nuget", "{E20AB6B8-9D07-4CB5-A655-E35B7130B4F0}"
 	ProjectSection(SolutionItems) = preProject
 		nuget\Pack.bat = nuget\Pack.bat
-		nuget\TinyBenchmark.nuspec = nuget\TinyBenchmark.nuspec
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BB0B9702-84C6-4E5E-93CC-F265AD0C7FB3}"
