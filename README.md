@@ -53,13 +53,13 @@ class BenchmarksContainer
 ```csharp
 class BenchmarksContainer
 {
-    [Benchmark]
-    [Arguments(10_000)]
-    [Arguments(100_000)]
     /// <summary>
     /// This benchmark will be executed once for each [Arguments],
     /// with the "times" variable assigned to the value specified the attribute.
     /// </summary>
+    [Benchmark]
+    [Arguments(10_000)]
+    [Arguments(100_000)]
     public void TestMe(int times)
     {
         string token = "test";
@@ -91,13 +91,13 @@ class Demo
 
 class BenchmarksContainer
 {
-    [Benchmark(Iterations = 3)]
-    [Arguments(10_000)]
-    [Arguments(100_000)]
     /// <summary>
     /// This benchmark will be executed once for each [Arguments]
     /// and once for each iteration, for a total of 6 runs.
     /// </summary>
+    [Benchmark(Iterations = 3)]
+    [Arguments(10_000)]
+    [Arguments(100_000)]
     public void TestMe(int times)
     {
         string token = "test";
