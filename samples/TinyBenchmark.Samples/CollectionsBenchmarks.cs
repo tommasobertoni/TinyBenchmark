@@ -74,10 +74,10 @@ namespace TinyBenchmark.Samples
         private HashSet<int> _hashSet;
         private readonly IBenchmarkOutput _output;
 
-        [Warmup(ForBenchmark = nameof(HashSet))]
         public void HashSetWarmup() => _hashSet = new HashSet<int>();
 
         [Benchmark(Order = 2, Iterations = 2)]
+        [WarmupWith(nameof(HashSetWarmup))]
         public void HashSet()
         {
             for (int i = 0; i < this.ItemsCount; i++)

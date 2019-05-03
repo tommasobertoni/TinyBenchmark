@@ -10,23 +10,15 @@ namespace TinyBenchmark.Analysis
 {
     internal class ParametersSetCollection : IEnumerable<ParametersSet>
     {
+        public int ParametrizedPropertiesCount => _propertiesWithParameters.Count;
+
         private readonly List<PropertyWithParametersCollection> _propertiesWithParameters = new List<PropertyWithParametersCollection>();
 
-        public ParametersSetCollection(Type benchmarksContainerType)
+        public ParametersSetCollection()
         {
-            var parameterProperties = benchmarksContainerType
-                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Select(p => (property: p, attribute: p.GetCustomAttribute<ParamAttribute>()))
-                .Where(x => x.attribute != null)
-                .ToList();
-
-            foreach (var (property, attribute) in parameterProperties)
-            {
-                var propertyParametersCollection = new PropertyWithParametersCollection(property, attribute);
-                var parametersEnumerator = propertyParametersCollection.GetEnumerator();
-                _propertiesWithParameters.Add(propertyParametersCollection);
-            }
         }
+
+        public void Add(PropertyWithParametersCollection parametrizedProperty) => _propertiesWithParameters.Add(parametrizedProperty);
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
@@ -37,7 +29,7 @@ namespace TinyBenchmark.Analysis
             private readonly ParametersSetCollection _parametersSetCollection;
 
             private readonly List<(PropertyWithParametersCollection collection, IEnumerator<object> enumerator)> _propertiesParametersEnumerations =
-            new List<(PropertyWithParametersCollection, IEnumerator<object>)>();
+                new List<(PropertyWithParametersCollection, IEnumerator<object>)>();
             
             private int _targetCollectionIndex;
 

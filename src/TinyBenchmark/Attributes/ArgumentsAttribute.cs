@@ -8,7 +8,7 @@ namespace TinyBenchmark.Attributes
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
     public class ArgumentsAttribute : Attribute
     {
-        internal List<object> Arguments { get; }
+        internal IReadOnlyList<object> Arguments { get; }
 
         public ArgumentsAttribute(object argument)
             : this(new[] { argument })

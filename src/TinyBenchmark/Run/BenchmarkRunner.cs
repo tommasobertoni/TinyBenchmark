@@ -10,206 +10,29 @@ namespace TinyBenchmark
 {
     public class BenchmarkRunner
     {
-        private readonly BenchmarksAnalyzer _analyzer;
+        public OutputLevel MaxOutputLevel { get; }
 
-        public BenchmarkRunner()
+        public BenchmarkRunner(OutputLevel? maxOutputLevel = null)
         {
-            _analyzer = new BenchmarksAnalyzer();
-        }
-
-        public IRunnableBenchmarks InSequence(Action<SequentialBenchmarksConfiguration> sequenceConfiguration)
-        {
-            var config = new SequentialBenchmarksConfiguration(this);
-            sequenceConfiguration(config);
-            return config;
+            this.MaxOutputLevel = maxOutputLevel ?? OutputLevel.Normal;
         }
 
         public BenchmarksContainerReport Run<TBenchmarksContainer>() => this.Run(typeof(TBenchmarksContainer));
 
-        public BenchmarksContainerReport Run(Type benchmarksContainerType, string withName = null)
+        public BenchmarksContainerReport Run(Type benchmarksContainerType)
         {
-            var benchmarks = _analyzer.FindAllbenchmarks(benchmarksContainerType);
-            var benchmarksContainerAttribute = benchmarksContainerType
-                .GetCustomAttributes(typeof(BenchmarksContainerAttribute), false)
-                .FirstOrDefault() as BenchmarksContainerAttribute;
+            var output = new BenchmarkOutput(this.MaxOutputLevel);
 
-            var containerReport = new BenchmarksContainerReport
-            {
-                Name = benchmarksContainerAttribute?.Name ?? withName,
-                StartedAtUtc = DateTime.UtcNow,
-                Reports = new List<BenchmarkReport>(),
-                BenchmarkContainerType = benchmarksContainerType,
-            };
+            var scanner = new BenchmarksScanner(new BenchmarkOutput(this.MaxOutputLevel));
+            var planner = new BenchmarksPlanner(new BenchmarkOutput(this.MaxOutputLevel), scanner);
 
-            var sw = System.Diagnostics.Stopwatch.StartNew();
+            var executionPlan = planner.CreateExecutionPlan(benchmarksContainerType);
 
-            foreach (var bref in benchmarks)
-            {
-                var report = RunIterations(bref, benchmarksContainerType);
-                containerReport.Reports.Add(report);
-            }
+            output.WriteLine(OutputLevel.Normal, string.Empty);
 
-            sw.Stop();
-
-            containerReport.Elapsed = sw.Elapsed;
+            var containerReport = executionPlan.Run();
 
             return containerReport;
-        }
-
-        private BenchmarkReport RunIterations(
-            BenchmarkReference bref,
-            Type benchmarksContainerType)
-        {
-            var report = new BenchmarkReport
-            {
-                StartedAtUtc = DateTime.UtcNow,
-                Name = bref.Name,
-                SuccessfulIterations = 0,
-                IterationReports = new List<IterationReport>(),
-            };
-
-            if (bref.ParametersSetCollection?.Any() == true)
-            {
-                foreach (var parametersSet in bref.ParametersSetCollection)
-                    RunBenchmarkIterationsWithParametersSet(parametersSet);
-            }
-            else
-            {
-                RunBenchmarkIterationsWithParametersSet(null);
-            }
-
-            var failedIterationReports = report.IterationReports.Where(ir => ir.Failed).ToList();
-            if (failedIterationReports.Any())
-                report.Exception = new AggregateException(failedIterationReports.Select(ir => ir.Exception));
-
-            var successfulIterationReports = report.IterationReports.Where(ir => ir.Failed == false).ToList();
-            report.SuccessfulIterations = successfulIterationReports.Count;
-            if (successfulIterationReports.Any())
-            {
-                var avgElapsedTicks = successfulIterationReports.Sum(ir => ir.Elapsed.Ticks) / successfulIterationReports.Count;
-                report.Elapsed = TimeSpan.FromTicks(avgElapsedTicks);
-
-                var avgWarmupTicks = successfulIterationReports.Sum(ir => ir.Warmup.Ticks) / successfulIterationReports.Count;
-                report.Warmup = TimeSpan.FromTicks(avgWarmupTicks);
-            }
-
-            return report;
-
-            // Local functions
-
-            void RunBenchmarkIterationsWithParametersSet(ParametersSet parametersSet)
-            {
-                if (bref.ArgumentsCollection?.Any() == true)
-                {
-                    foreach (var args in bref.ArgumentsCollection)
-                        RunBenchmarkIterationsWithParametersSetAndArguments(parametersSet, args);
-                }
-                else RunBenchmarkIterationsWithParametersSetAndArguments(parametersSet, null);
-            }
-
-            void RunBenchmarkIterationsWithParametersSetAndArguments(ParametersSet parametersSet, BenchmarkArguments arguments)
-            {
-                for (int i = 0; i < bref.Iterations; i++)
-                {
-                    GC.Collect();
-                    var iterationReport = RunIteration(parametersSet, arguments);
-                    report.IterationReports.Add(iterationReport);
-                }
-            }
-
-            IterationReport RunIteration(ParametersSet parametersSet, BenchmarkArguments arguments)
-            {
-                var iterationReport = new IterationReport
-                {
-                    StartedAtUtc = DateTime.UtcNow,
-                    Parameters = parametersSet?.ToParametersModel(),
-                    Arguments = arguments?.ToArgumentsModel(),
-                };
-
-                try
-                {
-                    var container = PrepareWarmContainer(bref, benchmarksContainerType, parametersSet, iterationReport);
-
-                    var runSW = System.Diagnostics.Stopwatch.StartNew();
-                    var methodParameters = arguments?.AsMethodParameters();
-                    bref.Executable.Invoke(container, methodParameters);
-                    runSW.Stop();
-
-                    iterationReport.Elapsed = runSW.Elapsed;
-                }
-                catch (TargetInvocationException ex)
-                {
-                    iterationReport.Exception = ex.InnerException;
-                }
-                catch (Exception ex)
-                {
-                    iterationReport.Exception = ex;
-                }
-
-                return iterationReport;
-            }
-        }
-
-        private object PrepareWarmContainer(
-            BenchmarkReference bref,
-            Type benchmarksContainerType,
-            ParametersSet parametersSet,
-            IterationReport iterationReport)
-        {            
-            var constructorWithParameters = benchmarksContainerType.GetConstructors().FirstOrDefault(c =>
-            {
-                var constructorParameters = c.GetParameters();
-                if (constructorParameters.Any())
-                {
-                    return
-                        constructorParameters.Length == 1 &&
-                        constructorParameters.First().ParameterType == typeof(IBenchmarkOutput);
-                }
-
-                return false;
-            });
-
-            var warmupSW = System.Diagnostics.Stopwatch.StartNew();
-
-            // Create
-
-            var container = constructorWithParameters == null
-                ? Activator.CreateInstance(benchmarksContainerType)
-                : constructorWithParameters.Invoke(new[] { new BenchmarkOutput(this) });
-
-            // Init
-
-            parametersSet?.ApplyTo(container);
-            bref.Init?.Invoke(container, null);
-
-            // Warm up
-
-            foreach (var warmup in bref.Warmups)
-                warmup.Invoke(container, null);
-
-            warmupSW.Stop();
-
-            iterationReport.Warmup = warmupSW.Elapsed;
-
-            return container;
-        }
-    }
-
-    internal class BenchmarkOutput : IBenchmarkOutput
-    {
-        private readonly BenchmarkRunner _runner;
-        private readonly StringBuilder _sb;
-
-        public BenchmarkOutput(BenchmarkRunner runner)
-        {
-            _runner = runner;
-            _sb = new StringBuilder();
-        }
-
-        public void WriteLine(string text)
-        {
-            _sb.AppendLine(text);
-            Console.WriteLine(text); // TODO: remove this
         }
     }
 }

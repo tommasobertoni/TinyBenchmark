@@ -8,7 +8,7 @@ namespace TinyBenchmark.Attributes
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public class ParamAttribute : Attribute
     {
-        internal List<object> Values { get; }
+        internal IReadOnlyList<object> Values { get; }
 
         public ParamAttribute(object value)
             : this(new[] { value })

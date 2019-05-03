@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace TinyBenchmark
 {
-    public class Argument
+    public interface IBenchmarkOutput
     {
-        public string VariableName { get; internal set; }
-
-        public object Value { get; internal set; }
+        void WriteLine(string message);
     }
 }

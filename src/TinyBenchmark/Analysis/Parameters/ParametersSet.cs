@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace TinyBenchmark.Analysis
 {
-    internal class ParametersSet
+    internal class ParametersSet : IEnumerable<KeyValuePair<string, object>>
     {
         public object this[PropertyInfo property]
         {
@@ -34,13 +35,14 @@ namespace TinyBenchmark.Analysis
                 property.SetValue(container, value);
         }
 
-        public Parameters ToParametersModel()
+        private IEnumerable<KeyValuePair<string, object>> AsEnumerable()
         {
-            return new Parameters(_valuesMap.Values.Select(x => new ParameterValue
-            {
-                PropertyName = x.property.Name,
-                Value = x.value
-            }));
+            foreach (var pair in _valuesMap)
+                yield return new KeyValuePair<string, object>(pair.Key, pair.Value.value);
         }
+
+        public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => this.AsEnumerable().GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

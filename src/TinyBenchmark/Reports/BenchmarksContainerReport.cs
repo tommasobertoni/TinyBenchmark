@@ -7,14 +7,34 @@ namespace TinyBenchmark
 {
     public class BenchmarksContainerReport
     {
-        public string Name { get; internal set; }
+        public string Name { get; }
 
-        public Type BenchmarkContainerType { get; internal set; }
+        public Type BenchmarkContainerType { get; }
 
-        public DateTime StartedAtUtc { get; internal set; }
+        public DateTime StartedAtUtc { get; }
 
-        public TimeSpan Elapsed { get; internal set; }
+        public TimeSpan Duration { get; }
 
-        public List<BenchmarkReport> Reports { get; internal set; }
+        public IReadOnlyList<BenchmarkReport> Reports { get; }
+
+        public AggregateException Exception { get; set; }
+
+        public bool HasExceptions => this.Exception?.InnerExceptions?.Any() == true;
+
+        public BenchmarksContainerReport(
+            string name,
+            Type benchmarkContainerType,
+            DateTime startedAtUtc,
+            TimeSpan duration,
+            IEnumerable<BenchmarkReport> reports,
+            AggregateException exception = null)
+        {
+            this.Name = name;
+            this.BenchmarkContainerType = benchmarkContainerType;
+            this.StartedAtUtc = startedAtUtc.ToUniversalTime();
+            this.Duration = duration;
+            this.Reports = reports?.ToList().AsReadOnly();
+            this.Exception = exception;
+        }
     }
 }

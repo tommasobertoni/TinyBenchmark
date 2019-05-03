@@ -6,12 +6,7 @@ using System.Threading.Tasks;
 namespace TinyBenchmark.Attributes
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-    public class BenchmarkAttribute : Attribute
+    public class InitContainerAttribute : Attribute
     {
-        public string Name { get; set; }
-
-        public int Iterations { get; set; } = 1;
-
-        public int Order { get; set; }
     }
 }

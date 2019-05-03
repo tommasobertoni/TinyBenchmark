@@ -12,7 +12,7 @@ namespace TinyBenchmark.Samples
         private const string FindMe = "FindMe";
         private readonly List<string> _dataSet = new List<string>();
 
-        [Param(10_000_000)]
+        [Param(1_000_000, 10_000_000, 20_000_000)]
         public int ListSize { get; set; }
 
         [Init]
@@ -24,13 +24,12 @@ namespace TinyBenchmark.Samples
 
         // First
 
-        [Warmup(ForBenchmark = "Using Linq.First", Order = 1)]
         public void WarmupForLinqFirst() { }
-
         public void AnotherWarmupForLinqFirst() { }
 
+        [WarmupWith(nameof(WarmupForLinqFirst), Order = 1)]
         [WarmupWith(nameof(AnotherWarmupForLinqFirst), Order = 2)]
-        [Benchmark(Name = "Using Linq.First", Iterations = 3)]
+        [Benchmark(Name = "Using Linq.First", Iterations = 2)]
         public void First()
         {
             var foundItem = _dataSet.First(x => x == FindMe);
@@ -38,13 +37,12 @@ namespace TinyBenchmark.Samples
 
         // Single
 
-        [Warmup(ForBenchmark = "Using Linq.Single", Order = 2)]
         public void WarmupForLinqSingle() { }
-
         public void AnotherWarmupForLinqSingle() { }
 
         [WarmupWith(nameof(AnotherWarmupForLinqSingle), Order = 1)]
-        [Benchmark(Name = "Using Linq.Single", Iterations = 3)]
+        [WarmupWith(nameof(WarmupForLinqSingle), Order = 2)]
+        [Benchmark(Name = "Using Linq.Single", Iterations = 2)]
         public void Single()
         {
             var foundItem = _dataSet.Single(x => x == FindMe);

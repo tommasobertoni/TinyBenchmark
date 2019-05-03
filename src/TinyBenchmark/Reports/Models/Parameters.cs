@@ -11,9 +11,9 @@ namespace TinyBenchmark
 
         public int Hash { get; }
 
-        public Parameters(IEnumerable<ParameterValue> values)
+        internal Parameters(IEnumerable<ParameterValue> values)
         {
-            this.Values = values.ToList();
+            this.Values = values?.ToList().AsReadOnly();
             this.Hash = this.GetHashCode();
         }
 

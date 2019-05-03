@@ -7,18 +7,38 @@ namespace TinyBenchmark
 {
     public class IterationReport
     {
-        public DateTime StartedAtUtc { get; internal set; }
+        public int IterationNumber { get; }
 
-        public TimeSpan Warmup { get; internal set; }
+        public Parameters Parameters { get; }
 
-        public TimeSpan Elapsed { get; internal set; }
+        public IReadOnlyList<Argument> Arguments { get; }
+
+        public DateTime StartedAtUtc { get; }
+
+        public TimeSpan Warmup { get; }
+
+        public TimeSpan Duration { get; }
+
+        public Exception Exception { get; }
 
         public bool Failed => this.Exception != null;
 
-        public Exception Exception { get; internal set; }
-
-        public List<Argument> Arguments { get; set; }
-
-        public Parameters Parameters { get; internal set; }
+        internal IterationReport(
+            int iterationNumber,
+            Parameters parameters,
+            IEnumerable<Argument> arguments,
+            DateTime startedAtUtc,
+            TimeSpan warmup,
+            TimeSpan duration,
+            Exception exception = null)
+        {
+            this.IterationNumber = iterationNumber;
+            this.Parameters = parameters;
+            this.Arguments = arguments?.ToList().AsReadOnly();
+            this.StartedAtUtc = startedAtUtc.ToUniversalTime();
+            this.Warmup = warmup;
+            this.Duration = duration;
+            this.Exception = exception;
+        }
     }
 }
