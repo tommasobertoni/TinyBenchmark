@@ -136,6 +136,8 @@ namespace TinyBenchmark.Analysis
             Func<TBenchmarksContainer> benchmarksContainerFactory,
             int iterationNumber)
         {
+            GC.Collect();
+
             Exception exception = null;
 
             Stopwatch warmupSW = null;
