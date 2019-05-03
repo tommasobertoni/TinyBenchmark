@@ -17,6 +17,7 @@ _**Jump to**_
   - [Average the results over multiple iterations](#average-the-results-over-multiple-iterations)
   - [Named benchmarks](#named-benchmarks)
   - [Benchmarks comparison](#benchmarks-comparison)
+  - [Benchmarks outout](#benchmarks-output)
 
 <br />
 
@@ -80,9 +81,6 @@ class Demo
         var runner = new BenchmarkRunner();
         var report = runner.Run<BenchmarksContainer>();
 
-        // Explore the report!
-        Console.WriteLine($"Total duration: {report.Duration}");
-
         var benchmarkReport = report.Reports.First();
         Console.WriteLine($"Benchmark: {benchmarkReport.Name}");
         Console.WriteLine($"  average iteration duration: {benchmarkReport.AvgIterationDuration}");
@@ -126,7 +124,27 @@ class BenchmarksContainer
 
 #### Benchmarks comparison
 ```csharp
-public class BasicBenchmarks
+class Demo
+{
+    public static void Main(string[] args)
+    {
+        var runner = new BenchmarkRunner();
+        var report = runner.Run<BenchmarksContainer>();
+
+        var stringConcatenationBenchmarkReport = report.Reports[0];
+        Console.WriteLine($"Benchmark: {stringConcatenationBenchmarkReport.Name}");
+        Console.WriteLine($"  average iteration duration: {stringConcatenationBenchmarkReport.AvgIterationDuration}");
+
+        var stringBuilderBenchmarkReport = report.Reports[1];
+        Console.WriteLine($"Benchmark: {stringBuilderBenchmarkReport.Name}");
+        Console.WriteLine($"  average iteration duration: {stringBuilderBenchmarkReport.AvgIterationDuration}");
+
+        var efficiency = Math.Round(stringConcatenationBenchmarkReport.AvgIterationDuration / stringBuilderBenchmarkReport.AvgIterationDuration, 1);
+        Console.WriteLine($"{stringBuilderBenchmarkReport.Name} is {efficiency} times faster than {stringConcatenationBenchmarkReport.Name}!");
+    }
+}
+
+public class BenchmarksContainer
 {
     private readonly string _token = "test";
     private readonly int _tokensCount = 50_000;
@@ -147,6 +165,65 @@ public class BasicBenchmarks
             sb.Append(_token);
 
         var msg = sb.ToString();
+    }
+}
+```
+<br />
+
+#### Benchmarks output
+Each benchmark can write to the console using an instance of `IBenchmarkOutput`.
+<br />
+Simply declare a constructor with this parameter and the library will inject an instance of it.
+
+Compared to simply using `Console.WriteLine`, this type has the advantage that is aware of the `OutputLevel`
+associated with each message, and therefore the user can easily configure how many logs should be displayed on the console.
+
+These are the current values of `OutputLevel`:
+- `Verbose`: print everything, **including the benchmarks output**
+- `Normal`: print less information compared to _Verbose_, but still give enough details about the execution.
+- `Minimal`: print only the main steps of the execution
+- `ErrorsOnly`: print only if some unexpected errors occurr
+- `Silent`: don't print _"anything"_
+
+Unless specified otherwise, the default output level of a `BenchmarkRunner` is `Normal`
+(therefore, by default, the benchmarks' logs won't be shown).
+
+```csharp
+class Demo
+{
+    public static void Main(string[] args)
+    {
+        var runner = new BenchmarkRunner(maxOutputLevel: OutputLevel.Verbose);
+        var report = runner.Run<BenchmarksContainer>();
+
+        var benchmarkReport = report.Reports.First();
+        Console.WriteLine($"Benchmark: {benchmarkReport.Name}");
+        Console.WriteLine($"  average iteration duration: {benchmarkReport.AvgIterationDuration}");
+    }
+}
+
+class BenchmarksContainer
+{
+    private readonly IBenchmarkOutput _output;
+
+    public BenchmarksContainer(IBenchmarkOutput output)
+    {
+        _output = output;
+    }
+
+    [Benchmark(Name = "String concatenation")]
+    public void StringConcatenation()
+    {
+        int times = 50_000;
+        string token = "test";
+
+        _output.WriteLine($"Concatenating {times} times the string \"{token}\"");
+
+        string msg = string.Empty;
+        for (int i = 0; i < times; i++)
+            msg += token;
+
+        _output.WriteLine("Terminated");
     }
 }
 ```
