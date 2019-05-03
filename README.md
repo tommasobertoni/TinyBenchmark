@@ -12,11 +12,11 @@ different methods and comparison between each other.
 _**Jump to**_
 
 - _**Usage**_
-  - [Run your first benchmark]
-  - [Define benchmark arguments]
-  - [Average the results over multiple iterations]
-  - [Named benchmarks]
-  - [Benchmarks comparison]
+  - [Run your first benchmark](#run-your-first-benchmark)
+  - [Define benchmark arguments](#define-benchmark-arguments)
+  - [Average the results over multiple iterations](#average-the-results-over-multiple-iterations)
+  - [Named benchmarks](#named-benchmarks)
+  - [Benchmarks comparison](#benchmarks-comparison)
 
 <br />
 
