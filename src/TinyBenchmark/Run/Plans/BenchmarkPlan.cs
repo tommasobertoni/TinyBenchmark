@@ -199,6 +199,7 @@ namespace TinyBenchmark.Analysis
             this.ParametersSet?.ApplyTo(benchmarksContainer);
 
             this.Init?.Executable.Invoke(benchmarksContainer, null);
+            this.Benchmark?.InitWithReference?.Executable.Invoke(benchmarksContainer, null);
 
             if (this.Warmups.Any())
             {

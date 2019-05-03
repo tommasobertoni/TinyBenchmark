@@ -180,6 +180,8 @@ namespace TinyBenchmark.Analysis
             {
                 var (executable, attribute) = benchmark;
 
+                var initWithReference = TryGetInitWithReference(executable);
+
                 var warmupCollection = CreateWarmupCollection(executable);
                 var orderedWarmupCollection = warmupCollection.OrderBy(w => w.Order);
 
@@ -191,6 +193,7 @@ namespace TinyBenchmark.Analysis
 
                 var reference = new BenchmarkReference(
                     attribute.Name ?? executable.Name,
+                    initWithReference,
                     orderedWarmupCollection,
                     argumentsCollection,
                     executable,
@@ -198,6 +201,32 @@ namespace TinyBenchmark.Analysis
 
                 return reference;
             }
+        }
+
+        private InitReference TryGetInitWithReference(MethodInfo executable)
+        {
+            var initWithAttributes = executable.GetCustomAttributes<InitWithAttribute>()?.ToList();
+
+            if (initWithAttributes?.Count > 1)
+                throw new InvalidOperationException($"Multiple {nameof(InitContainerAttribute)} not allowed in the same container.");
+
+            var attr = initWithAttributes.FirstOrDefault();
+            if (attr == null) return null;
+
+            var containerType = executable.DeclaringType;
+
+            var initWithMethod = GetMethods(containerType).FirstOrDefault(m => m.Name == attr.MethodName);
+
+            if (initWithMethod == null)
+            {
+                _output.WriteLine(OutputLevel.Normal, $"Couldn't find init method {containerType.FullName}.{attr.MethodName}");
+            }
+            else if (initWithMethod.GetParameters().Any())
+            {
+                throw new InvalidOperationException($"Init method {containerType.FullName}.{initWithMethod.Name} cannot have parameters.");
+            }
+
+            return new InitReference(initWithMethod);
         }
 
         private IEnumerable<ArgumentsReference> CreateArgumentsCollection(MethodInfo executable)

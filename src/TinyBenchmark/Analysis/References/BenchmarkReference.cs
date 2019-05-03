@@ -10,6 +10,8 @@ namespace TinyBenchmark.Analysis
     {
         public string Name { get; }
 
+        public InitReference InitWithReference { get; }
+
         public IReadOnlyList<WarmupReference> WarmupCollection { get; }
 
         public IReadOnlyList<ArgumentsReference> ArgumentsCollection { get; }
@@ -22,6 +24,7 @@ namespace TinyBenchmark.Analysis
 
         public BenchmarkReference(
             string name,
+            InitReference initWithReference,
             IEnumerable<WarmupReference> warmupCollection,
             IEnumerable<ArgumentsReference> argumentsCollection,
             MethodInfo executable,
@@ -29,6 +32,7 @@ namespace TinyBenchmark.Analysis
             bool isBaseline = false)
         {
             this.Name = name;
+            this.InitWithReference = initWithReference;
             this.WarmupCollection = warmupCollection?.ToList().AsReadOnly();
             this.ArgumentsCollection = argumentsCollection?.ToList().AsReadOnly();
             this.Executable = executable;

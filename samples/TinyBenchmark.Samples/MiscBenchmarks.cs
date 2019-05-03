@@ -36,7 +36,10 @@ namespace TinyBenchmark.Samples
             System.Threading.Thread.Sleep(300);
         }
 
+        public void InitAlwaysFailingBenchmark() => _output.WriteLine("Initializing method...");
+
         [Benchmark(Iterations = 3)]
+        [InitWith(nameof(InitAlwaysFailingBenchmark))]
         public void AlwaysFailingBenchmark() => throw new Exception("Cannot run this benchmark");
     }
 }
