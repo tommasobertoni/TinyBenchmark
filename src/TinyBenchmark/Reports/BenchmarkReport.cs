@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TinyBenchmark
 {
-    public class BenchmarkReport
+    public class BenchmarkReport : IBenchmark
     {
         public string Name { get; }
 
@@ -17,7 +17,13 @@ namespace TinyBenchmark
 
         public TimeSpan AvgIterationDuration { get; }
 
+        internal bool IsBaseline { get; }
+
+        public decimal? BaselineRatio { get; internal set; }
+
         public IReadOnlyList<IterationReport> IterationReports { get; }
+
+        public IReadOnlyList<Parameters> AppliedParameters { get; }
 
         public int SuccessfulIterations { get; }
 
@@ -25,17 +31,24 @@ namespace TinyBenchmark
 
         public bool HasExceptions => this.Exception?.InnerExceptions?.Any() == true;
 
-        internal BenchmarkReport(
+        protected internal BenchmarkReport(
             string name,
             DateTime startedAtUtc,
             TimeSpan duration,
+            bool isBaseline,
             IEnumerable<IterationReport> iterationReports,
             AggregateException exception = null)
         {
             this.Name = name;
             this.StartedAtUtc = startedAtUtc.ToUniversalTime();
             this.Duration = duration;
+
+            this.IsBaseline = isBaseline;
+            if (this.IsBaseline)
+                this.BaselineRatio = 1.0m;
+
             this.IterationReports = iterationReports?.ToList().AsReadOnly();
+            this.AppliedParameters = this.IterationReports?.Select(ir => ir.Parameters).Distinct().ToList();
             this.Exception = exception;
 
             this.SuccessfulIterations = this.IterationReports?.Count(ir => ir.Failed == false) ?? 0;
@@ -53,5 +66,7 @@ namespace TinyBenchmark
                 return avgTime;
             }
         }
+
+        void IBenchmark.Accept(IExporter exporter) => exporter.Visit(this);
     }
 }

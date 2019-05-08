@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TinyBenchmark
 {
-    public class BenchmarksContainerReport
+    public class BenchmarksContainerReport : IBenchmark
     {
         public string Name { get; }
 
@@ -21,7 +21,7 @@ namespace TinyBenchmark
 
         public bool HasExceptions => this.Exception?.InnerExceptions?.Any() == true;
 
-        public BenchmarksContainerReport(
+        protected internal BenchmarksContainerReport(
             string name,
             Type benchmarkContainerType,
             DateTime startedAtUtc,
@@ -36,5 +36,7 @@ namespace TinyBenchmark
             this.Reports = reports?.ToList().AsReadOnly();
             this.Exception = exception;
         }
+
+        void IBenchmark.Accept(IExporter exporter) => exporter.Visit(this);
     }
 }

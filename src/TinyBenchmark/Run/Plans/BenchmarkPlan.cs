@@ -21,6 +21,8 @@ namespace TinyBenchmark.Analysis
 
         public int Iterations { get; }
 
+        public bool IsBaseline { get; }
+
         private readonly BenchmarkOutput _output;
 
         public BenchmarkPlan(
@@ -30,7 +32,8 @@ namespace TinyBenchmark.Analysis
             ParametersSet parametersSet,
             ArgumentsReference arguments,
             BenchmarkReference benchmark,
-            int iterations)
+            int iterations,
+            bool isBaseline = false)
         {
             _output = output;
 
@@ -40,6 +43,7 @@ namespace TinyBenchmark.Analysis
             this.Arguments = arguments;
             this.Benchmark = benchmark;
             this.Iterations = iterations > 0 ? iterations : throw new ArgumentException("Iterations must be positive");
+            this.IsBaseline = isBaseline;
         }
 
         internal BenchmarkReport Run<TBenchmarksContainer>(Func<TBenchmarksContainer> benchmarksContainerFactory)
@@ -107,6 +111,7 @@ namespace TinyBenchmark.Analysis
                 this.Benchmark.Name,
                 startedAtUtc,
                 durationSW.Elapsed,
+                this.IsBaseline,
                 iterationReports,
                 exception);
         }
@@ -156,11 +161,15 @@ namespace TinyBenchmark.Analysis
                 durationSW.Stop();
             }
 
+            var parametersModels = this.ParametersSet == null
+                ? null :
+                new Parameters(this.ParametersSet.Select(p => new ParameterValue(p.Key, p.Value)));
+
             var argumentModels = this.Arguments?.Select(a => new Argument(a.Key, a.Value));
 
             return new IterationReport(
                 iterationNumber,
-                null,
+                parametersModels,
                 argumentModels,
                 startedAtUtc,
                 warmupSW.Elapsed,

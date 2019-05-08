@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BB0B9702-84C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyBenchmark", "src\TinyBenchmark\TinyBenchmark.csproj", "{E0F22E20-2695-42BA-8EC6-0A81703079DC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyBenchmark.Exporters", "src\TinyBenchmark.Exporters\TinyBenchmark.Exporters.csproj", "{0CAD698C-311A-4036-A177-64270A3B8819}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{E0F22E20-2695-42BA-8EC6-0A81703079DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0F22E20-2695-42BA-8EC6-0A81703079DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0F22E20-2695-42BA-8EC6-0A81703079DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CAD698C-311A-4036-A177-64270A3B8819}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CAD698C-311A-4036-A177-64270A3B8819}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CAD698C-311A-4036-A177-64270A3B8819}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CAD698C-311A-4036-A177-64270A3B8819}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,6 +49,7 @@ Global
 		{3802364C-F77C-4FC5-B9CF-B4A8D3759C70} = {5F8B1430-1097-4C69-9592-8F87B310C2C7}
 		{E20AB6B8-9D07-4CB5-A655-E35B7130B4F0} = {E213A7B9-F36C-4E40-BA04-06DE7B994EE7}
 		{E0F22E20-2695-42BA-8EC6-0A81703079DC} = {BB0B9702-84C6-4E5E-93CC-F265AD0C7FB3}
+		{0CAD698C-311A-4036-A177-64270A3B8819} = {BB0B9702-84C6-4E5E-93CC-F265AD0C7FB3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C225D10C-5169-4701-923B-30B5B4AD3822}

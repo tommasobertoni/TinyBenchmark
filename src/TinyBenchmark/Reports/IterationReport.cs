@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TinyBenchmark
 {
-    public class IterationReport
+    public class IterationReport : IBenchmark
     {
         public int IterationNumber { get; }
 
@@ -19,11 +19,13 @@ namespace TinyBenchmark
 
         public TimeSpan Duration { get; }
 
+        public decimal? BaselineRatio { get; internal set; }
+
         public Exception Exception { get; }
 
         public bool Failed => this.Exception != null;
 
-        internal IterationReport(
+        protected internal IterationReport(
             int iterationNumber,
             Parameters parameters,
             IEnumerable<Argument> arguments,
@@ -40,5 +42,7 @@ namespace TinyBenchmark
             this.Duration = duration;
             this.Exception = exception;
         }
+
+        void IBenchmark.Accept(IExporter exporter) => exporter.Visit(this);
     }
 }

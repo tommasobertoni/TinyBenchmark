@@ -73,7 +73,9 @@ namespace TinyBenchmark.Analysis
 
                 #endregion
 
+                var benchmarkReportsWithSameParameters = new List<BenchmarkReport>();
                 var plansGroupedByParameters = _benchmarkPlans.ToLookup(p => p.ParametersSet);
+
                 foreach (var group in plansGroupedByParameters)
                 {
                     var plans = group.ToList();
@@ -92,6 +94,8 @@ namespace TinyBenchmark.Analysis
 
                     _output.IndentLevel++;
 
+                    benchmarkReportsWithSameParameters.Clear();
+
                     foreach (var benchmarkPlan in plans)
                     {
                         #region Output
@@ -109,11 +113,16 @@ namespace TinyBenchmark.Analysis
                         #endregion
 
                         var report = benchmarkPlan.Run(() => CreateNew(this.Container.ContainerType));
-                        benchmarkReports.Add(report);
+                        benchmarkReportsWithSameParameters.Add(report);
 
                         _output.IndentLevel--;
                         progress?.IncreaseProcessedItems();
                     }
+
+                    // The baseline is evaluated on every group of benchmarks with the same parameters.
+                    EvaluateBaseline(benchmarkReportsWithSameParameters);
+
+                    benchmarkReports.AddRange(benchmarkReportsWithSameParameters);
 
                     _output.IndentLevel--;
                 }
@@ -138,6 +147,33 @@ namespace TinyBenchmark.Analysis
                 exception: exception);
 
             return containerReport;
+        }
+
+        private void EvaluateBaseline(List<BenchmarkReport> reports)
+        {
+            var baselineReport = reports.FirstOrDefault(r => r.IsBaseline);
+            if (baselineReport == null) return;
+
+            var avgBaselineDurationTicks = baselineReport.AvgIterationDuration.Ticks;
+            EvaluateBaselineOnIterations(baselineReport.IterationReports);
+
+            foreach (var report in reports.Where(r => r != baselineReport))
+            {
+                var avgDurationTicks = report.AvgIterationDuration.Ticks;
+                report.BaselineRatio = avgDurationTicks * 1.0m / avgBaselineDurationTicks;
+                EvaluateBaselineOnIterations(report.IterationReports);
+            }
+
+            // Local functions
+
+            void EvaluateBaselineOnIterations(IReadOnlyList<IterationReport> iterationReports)
+            {
+                foreach (var ir in iterationReports)
+                {
+                    var durationTicks = ir.Duration.Ticks;
+                    ir.BaselineRatio = durationTicks * 1.0m / avgBaselineDurationTicks;
+                }
+            }
         }
 
         #region Helpers

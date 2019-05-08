@@ -25,7 +25,7 @@ namespace TinyBenchmark.Samples
             _output = output;
         }
 
-        public void FindInHashWarmup()
+        public void FindInHashInit()
         {
             var targetPosition = this.ItemsCount * 2 / 3;
             for (int i = 0; i < this.ItemsCount; i++)
@@ -35,16 +35,23 @@ namespace TinyBenchmark.Samples
                     _hash.Add(Guid.NewGuid().ToString());
         }
 
+        public void FindInHashWarmup() => FindInHash(2);
+
         [Benchmark(Iterations = 2)]
+        [Arguments(3)]
+        [InitWith(nameof(FindInHashInit))]
         [WarmupWith(nameof(FindInHashWarmup))]
-        public void FindInHash()
+        public void FindInHash(int loops)
         {
-            var found = _hash.Contains(TargetItem);
-            if (!found)
-                _output.WriteLine($"Item {TargetItem} was not found in the hash set.");
+            for (int i = 0; i < loops; i++)
+            {
+                var found = _hash.Contains(TargetItem);
+                if (!found)
+                    _output.WriteLine($"Item {TargetItem} was not found in the hash set.");
+            }
         }
 
-        public void FindInListWarmup()
+        public void FindInListInit()
         {
             var targetPosition = this.ItemsCount * 2 / 3;
             for (int i = 0; i < this.ItemsCount; i++)
@@ -54,13 +61,20 @@ namespace TinyBenchmark.Samples
                     _list.Add(Guid.NewGuid().ToString());
         }
 
-        [Benchmark(Iterations = 1)]
+        public void FindInListWarmup() => FindInList(1);
+
+        [Benchmark(Iterations = 1, Baseline = true)]
+        [Arguments(3)]
+        [InitWith(nameof(FindInListInit))]
         [WarmupWith(nameof(FindInListWarmup))]
-        public void FindInList()
+        public void FindInList(int loops)
         {
-            var found = _list.Contains(TargetItem);
-            if (!found)
-                _output.WriteLine($"Item {TargetItem} was not found in the list.");
+            for (int i = 0; i < loops; i++)
+            {
+                var found = _list.Contains(TargetItem);
+                if (!found)
+                    _output.WriteLine($"Item {TargetItem} was not found in the list.");
+            }
         }
     }
 }

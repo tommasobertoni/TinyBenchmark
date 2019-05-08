@@ -13,5 +13,7 @@ namespace TinyBenchmark.Attributes
         public int Iterations { get; set; } = 1;
 
         public int Order { get; set; }
+
+        public bool Baseline { get; set; }
     }
 }

@@ -193,7 +193,8 @@ namespace TinyBenchmark.Analysis
                     orderedWarmupCollection,
                     argumentsCollection,
                     executable,
-                    iterations);
+                    iterations,
+                    attribute.Baseline);
 
                 return reference;
             }

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>TinyBenchmark.Exporters</id>
+    <version>0.1.0-alpha6</version>
+    <title>TinyBenchmark.Exporters</title>
+    <authors>Tommaso Bertoni</authors>
+    <owners>tommasobertoni</owners>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/tommasobertoni/TinyBenchmark/blob/master/README.md</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Report exporters for TinyBenchmark.</description>
+    <summary>This is a beta version.</summary>
+    <repository type="git" url="https://github.com/tommasobertoni/TinyBenchmark" />
+    <copyright>Copyright 2019</copyright>
+    <tags>benchmark netstandard</tags>
+  </metadata>
+</package>

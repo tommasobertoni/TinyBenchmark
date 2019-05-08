@@ -10,13 +10,25 @@ namespace TinyBenchmark.Samples
         {
             const string separator = "------------------------------------------------------------";
 
-            var runner = new BenchmarkRunner(OutputLevel.Verbose);
+            var runner = new BenchmarkRunner(OutputLevel.Minimal);
 
             //var collectionsBenchmarksReport = RunAndPrint<CollectionsBenchmarks>();
             var hashBenchmarksReport = RunAndPrint<HashBenchmarks>();
             //var linqBenchmarksReport = RunAndPrint<LinqBenchmarks>();
             //var miscBenchmarksReport = RunAndPrint<MiscBenchmarks>();
             //var noBenchmarksReport = RunAndPrint<NoBenchmarks>();
+
+            Console.WriteLine();
+            Console.WriteLine("Test:");
+
+            var text = hashBenchmarksReport.ExportAsText();
+            Console.WriteLine(text);
+
+            //Console.WriteLine();
+            //Console.WriteLine("Json:");
+
+            //var json = hashBenchmarksReport.ExportAsJson();
+            //Console.WriteLine(json);
 
             //Demo01_FirstBenchmark.Program.Main(args);
             //Demo02_BenchmarkArguments.Program.Main(args);

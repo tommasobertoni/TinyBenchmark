@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\TinyBenchmark.Exporters\TinyBenchmark.Exporters.csproj" />
     <ProjectReference Include="..\..\src\TinyBenchmark\TinyBenchmark.csproj" />
   </ItemGroup>
 

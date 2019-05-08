@@ -59,7 +59,8 @@ namespace TinyBenchmark.Analysis
                     parametersSet,
                     arguments,
                     benchmark,
-                    benchmark.Iterations);
+                    benchmark.Iterations,
+                    benchmark.IsBaseline);
 
                 containerExecutionPlan.Add(benchmarkPlan);
             }
