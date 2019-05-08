@@ -46,12 +46,6 @@ namespace TinyBenchmark.Analysis
         {
             #region Output
 
-            if (this.ParametersSet != null)
-            {
-                var parametersStrings = this.ParametersSet.Select(p => $"{p.Key}={p.Value}");
-                _output.WriteLine(OutputLevel.Verbose, $"with parameters {string.Join(", ", parametersStrings)}");
-            }
-
             if (this.Arguments?.Any() == true && _output.IsShown(OutputLevel.Verbose))
             {
                 var argumentsStrings = this.Arguments.Select(a => $"{a.Key}={a.Value}");

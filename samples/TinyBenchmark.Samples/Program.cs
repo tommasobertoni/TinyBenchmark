@@ -10,7 +10,7 @@ namespace TinyBenchmark.Samples
         {
             const string separator = "------------------------------------------------------------";
 
-            var runner = new BenchmarkRunner(OutputLevel.ErrorsOnly);
+            var runner = new BenchmarkRunner(OutputLevel.Verbose);
 
             var hashVsListReport = RunAndPrint<HashBenchmarks>();
 

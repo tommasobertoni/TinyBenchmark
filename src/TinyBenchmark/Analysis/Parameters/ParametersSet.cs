@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace TinyBenchmark.Analysis
 {
-    internal class ParametersSet : IEnumerable<KeyValuePair<string, object>>
+    internal class ParametersSet : IEnumerable<KeyValuePair<string, object>>, IEquatable<ParametersSet>
     {
         public object this[PropertyInfo property]
         {
@@ -44,5 +44,61 @@ namespace TinyBenchmark.Analysis
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => this.AsEnumerable().GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        public override string ToString()
+        {
+            var toStrings = this._valuesMap.Select(x => $"{x.Key}:{x.Value.value}");
+            var toString = string.Join(", ", toStrings);
+            return toString;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+
+                foreach (var v in this._valuesMap)
+                {
+                    var vHash = 17;
+                    vHash = vHash * 23 + v.Key?.GetHashCode() ?? 0;
+                    vHash = vHash * 23 + v.Value.value?.GetHashCode() ?? 0;
+                    hash = hash * 23 + vHash;
+                }
+
+                return hash;
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is null) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+
+            return Equals(obj as ParametersSet);
+        }
+
+        public bool Equals(ParametersSet other)
+        {
+            if (other is null) return false;
+
+            if (this._valuesMap.Count != other._valuesMap.Count) return false;
+
+            foreach (var key in this._valuesMap.Keys)
+            {
+                if (!other._valuesMap.ContainsKey(key)) return false;
+
+                var (prop, value) = this._valuesMap[key];
+                var (otherProp, otherValue) = other._valuesMap[key];
+
+                if (value == null && otherValue == null) continue;
+                if (value == null && otherValue != null) return false;
+                if (value != null && otherValue == null) return false;
+                if (!value.Equals(otherValue)) return false;
+            }
+
+            return true;
+        }
     }
 }

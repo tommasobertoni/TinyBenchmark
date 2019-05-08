@@ -73,27 +73,49 @@ namespace TinyBenchmark.Analysis
 
                 #endregion
 
-                foreach (var benchmarkPlan in _benchmarkPlans)
+                var plansGroupedByParameters = _benchmarkPlans.ToLookup(p => p.ParametersSet);
+                foreach (var group in plansGroupedByParameters)
                 {
-                    #region Output
+                    var plans = group.ToList();
 
-                    if (benchmarkPlan.Iterations <= 1)
-                        _output.WriteLine(OutputLevel.Normal, $"Benchmark: {benchmarkPlan.Benchmark.Name}");
+                    var aPlan = plans.First();
+
+                    if (aPlan.ParametersSet != null)
+                    {
+                        var parametersStrings = aPlan.ParametersSet.Select(p => $"{p.Key}={p.Value}");
+                        _output.WriteLine(OutputLevel.Verbose, $"With parameters {string.Join(", ", parametersStrings)}");
+                    }
                     else
-                        _output.WriteLine(OutputLevel.Normal, $"Benchmark: {benchmarkPlan.Benchmark.Name}, iterations: {benchmarkPlan.Iterations}");
+                    {
+                        _output.WriteLine(OutputLevel.Verbose, $"Without parameters");
+                    }
 
-                    // The output is shared between the execution plan and the benchmark plan.
-                    // Therefore an increase in the indent level before running the benchmark plan
-                    // will result in its output to be properly formatted.
                     _output.IndentLevel++;
 
-                    #endregion
+                    foreach (var benchmarkPlan in plans)
+                    {
+                        #region Output
 
-                    var report = benchmarkPlan.Run(() => CreateNew(this.Container.ContainerType));
-                    benchmarkReports.Add(report);
+                        if (benchmarkPlan.Iterations <= 1)
+                            _output.WriteLine(OutputLevel.Normal, $"Benchmark: {benchmarkPlan.Benchmark.Name}");
+                        else
+                            _output.WriteLine(OutputLevel.Normal, $"Benchmark: {benchmarkPlan.Benchmark.Name}, iterations: {benchmarkPlan.Iterations}");
+
+                        // The output is shared between the execution plan and the benchmark plan.
+                        // Therefore an increase in the indent level before running the benchmark plan
+                        // will result in its output to be properly formatted.
+                        _output.IndentLevel++;
+
+                        #endregion
+
+                        var report = benchmarkPlan.Run(() => CreateNew(this.Container.ContainerType));
+                        benchmarkReports.Add(report);
+
+                        _output.IndentLevel--;
+                        progress?.IncreaseProcessedItems();
+                    }
 
                     _output.IndentLevel--;
-                    progress?.IncreaseProcessedItems();
                 }
 
                 _output.IndentLevel--;
