@@ -12,7 +12,18 @@ namespace TinyBenchmark.Samples
 
             var runner = new BenchmarkRunner(OutputLevel.Verbose);
 
-            var hashVsListReport = RunAndPrint<HashBenchmarks>();
+            //var collectionsBenchmarksReport = RunAndPrint<CollectionsBenchmarks>();
+            var hashBenchmarksReport = RunAndPrint<HashBenchmarks>();
+            //var linqBenchmarksReport = RunAndPrint<LinqBenchmarks>();
+            //var miscBenchmarksReport = RunAndPrint<MiscBenchmarks>();
+            //var noBenchmarksReport = RunAndPrint<NoBenchmarks>();
+
+            //Demo01_FirstBenchmark.Program.Main(args);
+            //Demo02_BenchmarkArguments.Program.Main(args);
+            //Demo03_MultipleIterations.Program.Main(args);
+            //Demo04_NamedBenchmarks.Program.Main(args);
+            //Demo05_BenchmarksComparison.Program.Main(args);
+            //Demo06_BenchmarksOutput.Program.Main(args);
 
             if (System.Diagnostics.Debugger.IsAttached)
             {

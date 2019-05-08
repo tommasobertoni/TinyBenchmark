@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 using TinyBenchmark;
 using TinyBenchmark.Attributes;
 
-namespace StepByStepSamples.BasicBenchmarks
+namespace TinyBenchmark.Samples.Demo05_BenchmarksComparison
 {
     class Program
     {
-        public static void Main()
+        public static void Main(string[] args)
         {
             var runner = new BenchmarkRunner();
-            var report = runner.Run<BasicBenchmarks>();
+            var report = runner.Run<BenchmarksContainer>();
 
             var stringConcatenationBenchmarkReport = report.Reports[0];
             Console.WriteLine($"Benchmark: {stringConcatenationBenchmarkReport.Name}");
@@ -28,7 +28,7 @@ namespace StepByStepSamples.BasicBenchmarks
         }
     }
 
-    public class BasicBenchmarks
+    public class BenchmarksContainer
     {
         private readonly string _token = "test";
         private readonly int _tokensCount = 50_000;
