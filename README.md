@@ -19,9 +19,7 @@ _**Jump to**_
   - [Benchmarks comparison](#benchmarks-comparison)
   - [Benchmarks outout](#benchmarks-output)
 
-<br />
-
-#### Run your first benchmark
+### Run your first benchmark
 
 ```csharp
 class Demo
@@ -48,9 +46,8 @@ class BenchmarksContainer
     }
 }
 ```
-<br />
 
-#### Define benchmark arguments
+### Define benchmark arguments
 ```csharp
 class BenchmarksContainer
 {
@@ -70,9 +67,8 @@ class BenchmarksContainer
     }
 }
 ```
-<br />
 
-#### Average the results over multiple iterations
+### Average the results over multiple iterations
 ```csharp
 class Demo
 {
@@ -105,9 +101,8 @@ class BenchmarksContainer
     }
 }
 ```
-<br />
 
-#### Named benchmarks
+### Named benchmarks
 ```csharp
 class BenchmarksContainer
 {
@@ -120,9 +115,8 @@ class BenchmarksContainer
     }
 }
 ```
-<br />
 
-#### Benchmarks comparison
+### Benchmarks comparison
 ```csharp
 class Demo
 {
@@ -168,9 +162,8 @@ public class BenchmarksContainer
     }
 }
 ```
-<br />
 
-#### Benchmarks output
+### Benchmarks output
 Each benchmark can write to the console using an instance of `IBenchmarkOutput`.
 <br />
 Simply declare a constructor with this parameter and the library will inject an instance of it.
