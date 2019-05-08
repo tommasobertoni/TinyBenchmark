@@ -37,7 +37,6 @@ namespace TinyBenchmark.Analysis
                 : this.Container.Name;
 
             _output.WriteLine(OutputLevel.Minimal, $"Running container \"{outputContainerName}\", total planned benchmarks: {this.BenchmarkPlans.Count}");
-            _output.WriteLine(OutputLevel.Verbose, string.Empty);
 
             #endregion
 
@@ -78,9 +77,10 @@ namespace TinyBenchmark.Analysis
                 {
                     #region Output
 
-                    _output.WriteLine(OutputLevel.Verbose, string.Empty);
-                    _output.WriteLine(OutputLevel.Normal, $"Benchmark: {benchmarkPlan.Benchmark.Name}");
-                    _output.WriteLine(OutputLevel.Verbose, string.Empty);
+                    if (benchmarkPlan.Iterations <= 1)
+                        _output.WriteLine(OutputLevel.Normal, $"Benchmark: {benchmarkPlan.Benchmark.Name}");
+                    else
+                        _output.WriteLine(OutputLevel.Normal, $"Benchmark: {benchmarkPlan.Benchmark.Name}, iterations: {benchmarkPlan.Iterations}");
 
                     // The output is shared between the execution plan and the benchmark plan.
                     // Therefore an increase in the indent level before running the benchmark plan
@@ -92,23 +92,8 @@ namespace TinyBenchmark.Analysis
                     var report = benchmarkPlan.Run(() => CreateNew(this.Container.ContainerType));
                     benchmarkReports.Add(report);
 
-                    #region Output
-
                     _output.IndentLevel--;
-
-                    var warmupOutput = _output.IsShown(OutputLevel.Verbose)
-                        ? $", avg warmup {report.AvgIterationWarmup}"
-                        : string.Empty;
-
-                    _output.WriteLine(OutputLevel.Verbose, string.Empty);
-                    _output.WriteLine(OutputLevel.Normal,
-                        $"=> elapsed: {report.Duration}, avg duration: {report.AvgIterationDuration} {warmupOutput}".TrimEnd());
-
-                    _output.WriteLine(OutputLevel.Normal, string.Empty);
-
                     progress?.IncreaseProcessedItems();
-
-                    #endregion
                 }
 
                 _output.IndentLevel--;
@@ -129,13 +114,6 @@ namespace TinyBenchmark.Analysis
                 durationSW.Elapsed,
                 benchmarkReports,
                 exception: exception);
-
-            #region Output
-
-            _output.WriteLine(OutputLevel.Normal, string.Empty);
-            _output.WriteLine(OutputLevel.Normal, $"=> elapsed: {containerReport.Duration}");
-
-            #endregion
 
             return containerReport;
         }

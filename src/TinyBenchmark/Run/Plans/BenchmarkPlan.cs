@@ -49,7 +49,7 @@ namespace TinyBenchmark.Analysis
             if (this.ParametersSet != null)
             {
                 var parametersStrings = this.ParametersSet.Select(p => $"{p.Key}={p.Value}");
-                _output.WriteLine(OutputLevel.Normal, $"with parameters {string.Join(", ", parametersStrings)}");
+                _output.WriteLine(OutputLevel.Verbose, $"with parameters {string.Join(", ", parametersStrings)}");
             }
 
             if (this.Arguments?.Any() == true && _output.IsShown(OutputLevel.Verbose))
@@ -57,8 +57,6 @@ namespace TinyBenchmark.Analysis
                 var argumentsStrings = this.Arguments.Select(a => $"{a.Key}={a.Value}");
                 _output.WriteLine(OutputLevel.Verbose, $"with arguments {string.Join(", ", argumentsStrings)}");
             }
-
-            _output.WriteLine(OutputLevel.Verbose, string.Empty);
 
             _output.IndentLevel++;
 
@@ -80,27 +78,14 @@ namespace TinyBenchmark.Analysis
 
                     #region Output
 
-                    var prefix = $"[Iteration {iterationNumber}]";
-
-                    if (_output.IsShown(OutputLevel.Verbose))
+                    if (iterationReport.Failed)
                     {
-                        var failedOutput = iterationReport.Failed
+                        var failedOutput = _output.IsShown(OutputLevel.Verbose)
                             ? $"[FAILED] => {LimitTo(iterationReport.Exception.Message, 200)}"
-                            : string.Empty;
+                            : $"[FAILED]";
 
-                        _output.WriteLine(OutputLevel.Verbose,
-                            $"{prefix} elapsed: {iterationReport.Duration}, warmup: {iterationReport.Warmup} {failedOutput}".TrimEnd());
+                        _output.WriteLine(failedOutput);
                     }
-                    else
-                    {
-                        var failedOutput = iterationReport.Failed ? $"[FAILED]" : string.Empty;
-
-                        _output.WriteLine(OutputLevel.Normal,
-                            $"{prefix} elapsed: {iterationReport.Duration} {failedOutput}".TrimEnd());
-                    }
-
-                    if (iterationNumber < this.Iterations - 1) // Not for the last iteration
-                        _output.WriteLine(OutputLevel.Verbose, string.Empty);
 
                     #endregion
                 }
@@ -155,12 +140,7 @@ namespace TinyBenchmark.Analysis
 
                 durationSW = Stopwatch.StartNew();
 
-                #region Output
-
-                _output.WriteLine(OutputLevel.Normal, "Output:");
                 _output.IndentLevel++;
-
-                #endregion
 
                 var methodParameters = this.Arguments?.AsMethodParameters();
                 this.Benchmark.Executable.Invoke(benchmarksContainer, methodParameters);
@@ -207,15 +187,6 @@ namespace TinyBenchmark.Analysis
             {
                 foreach (var warmup in this.Warmups)
                 {
-                    #region Output
-
-                    if (_output.IsShown(OutputLevel.Verbose))
-                        _output.WriteLine(OutputLevel.Verbose, $"- warmup {warmup.Name}, order {warmup.Order}");
-                    else
-                        _output.WriteLine(OutputLevel.Verbose, $"- warmup {warmup.Name}");
-
-                    #endregion
-
                     warmup.Executable.Invoke(benchmarksContainer, null);
                 }
             }

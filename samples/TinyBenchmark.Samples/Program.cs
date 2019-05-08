@@ -10,13 +10,9 @@ namespace TinyBenchmark.Samples
         {
             const string separator = "------------------------------------------------------------";
 
-            var runner = new BenchmarkRunner(OutputLevel.Verbose);
+            var runner = new BenchmarkRunner(OutputLevel.ErrorsOnly);
 
             var hashVsListReport = RunAndPrint<HashBenchmarks>();
-            //var linqReport = RunAndPrint<LinqBenchmarks>();
-            //var collectionsReport = RunAndPrint<CollectionsBenchmarks>();
-            //var miscReport = RunAndPrint<MiscBenchmarks>();
-            //var noBenchmarksReport = RunAndPrint<NoBenchmarks>();
 
             if (System.Diagnostics.Debugger.IsAttached)
             {
@@ -28,7 +24,6 @@ namespace TinyBenchmark.Samples
 
             BenchmarksContainerReport RunAndPrint<TBenchmarksContainer>()
             {
-                Console.Write($"{Environment.NewLine}{Environment.NewLine}");
                 Console.WriteLine($"{typeof(TBenchmarksContainer).Name}");
                 Console.WriteLine($"{separator}{Environment.NewLine}");
                 var report = runner.Run<TBenchmarksContainer>();

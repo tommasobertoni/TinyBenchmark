@@ -28,8 +28,6 @@ namespace TinyBenchmark
 
             var executionPlan = planner.CreateExecutionPlan(benchmarksContainerType);
 
-            output.WriteLine(OutputLevel.Normal, string.Empty);
-
             var containerReport = executionPlan.Run();
 
             return containerReport;

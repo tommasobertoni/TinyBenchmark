@@ -22,9 +22,6 @@ namespace TinyBenchmark.Analysis
         {
             _scanner.Scan(benchmarksContainerType);
 
-            _output.WriteLine(OutputLevel.Normal, string.Empty);
-            _output.WriteLine(OutputLevel.Normal, $"Creating execution plan for container {_scanner.Container.Name}");
-
             var containerExecutionPlan = new ContainerExecutionPlan(_output, _scanner.Container);
             var container = containerExecutionPlan.Container;
 

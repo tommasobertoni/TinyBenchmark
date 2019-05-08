@@ -51,13 +51,6 @@ namespace TinyBenchmark.Analysis
 
             var parametersSetCollection = GetParametersSetCollection(benchmarksContainerType);
 
-            var optionalDetail = _output.IsShown(OutputLevel.Verbose)
-                ? $"with a total of {parametersSetCollection.Count()} sets of parameter values"
-                : string.Empty;
-
-            var parametrizedPropertiesCount = parametersSetCollection.ParametrizedPropertiesCount;
-            _output.WriteLine(OutputLevel.Normal, $"Found {parametrizedPropertiesCount} parametrized properties {optionalDetail}".TrimEnd());
-
             // Container
 
             this.Container = GetContainerReference(benchmarksContainerType, parametersSetCollection);
@@ -71,17 +64,20 @@ namespace TinyBenchmark.Analysis
             this.Init = TryGetInitReference(benchmarksContainerType);
 
             if (this.Init != null)
-                _output.WriteLine(OutputLevel.Normal, $"Found init named {this.Init.Executable.Name}");
+                _output.WriteLine(OutputLevel.Verbose, $"Found init named {this.Init.Executable.Name}");
 
             // Benchmarks
 
             this.Benchmarks = GetBenchmarkReferences(benchmarksContainerType);
 
-            var baselineBenchmark = this.Benchmarks.FirstOrDefault(br => br.IsBaseline);
-            if (baselineBenchmark == null)
-                _output.WriteLine(OutputLevel.Normal, $"Found {this.Benchmarks.Count} benchmarks");
-            else
-                _output.WriteLine(OutputLevel.Normal, $"Found {this.Benchmarks.Count} benchmarks, baseline: {baselineBenchmark.Name}");
+            if (_output.IsShown(OutputLevel.Normal))
+            {
+                var baselineBenchmark = this.Benchmarks.FirstOrDefault(br => br.IsBaseline);
+                if (baselineBenchmark == null)
+                    _output.WriteLine(OutputLevel.Normal, $"Found {this.Benchmarks.Count} benchmarks");
+                else
+                    _output.WriteLine(OutputLevel.Normal, $"Found {this.Benchmarks.Count} benchmarks, baseline: {baselineBenchmark.Name}");
+            }
 
             _output.IndentLevel--;
         }
