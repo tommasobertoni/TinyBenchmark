@@ -35,10 +35,10 @@ namespace TinyBenchmark.Samples
                     _hash.Add(Guid.NewGuid().ToString());
         }
 
-        public void FindInHashWarmup() => FindInHash(2);
+        public void FindInHashWarmup() => FindInHash(3);
 
-        [Benchmark(Iterations = 2)]
-        [Arguments(3)]
+        [Benchmark(Iterations = 3, Name = "HashSet.Contains")]
+        [Arguments(10)]
         [InitWith(nameof(FindInHashInit))]
         [WarmupWith(nameof(FindInHashWarmup))]
         public void FindInHash(int loops)
@@ -63,8 +63,8 @@ namespace TinyBenchmark.Samples
 
         public void FindInListWarmup() => FindInList(1);
 
-        [Benchmark(Iterations = 1, Baseline = true)]
-        [Arguments(3)]
+        [Benchmark(Iterations = 2, Name = "List.Contains", Baseline = true)]
+        [Arguments(10)]
         [InitWith(nameof(FindInListInit))]
         [WarmupWith(nameof(FindInListWarmup))]
         public void FindInList(int loops)

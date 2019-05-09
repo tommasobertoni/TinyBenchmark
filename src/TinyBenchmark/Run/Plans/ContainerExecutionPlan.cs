@@ -30,18 +30,23 @@ namespace TinyBenchmark.Analysis
 
         public BenchmarksContainerReport Run()
         {
+            var totalIterations = this.BenchmarkPlans.Sum(p => p.Iterations);
+
             #region Output
 
             var outputContainerName = _output.IsShown(OutputLevel.Verbose)
                 ? $"{this.Container.Name} (type {this.Container.ContainerType.FullName})"
                 : this.Container.Name;
 
-            _output.WriteLine(OutputLevel.Minimal, $"Running container \"{outputContainerName}\", total planned benchmarks: {this.BenchmarkPlans.Count}");
+            var plannedBenchmarksString = $"total planned benchmarks: {this.BenchmarkPlans.Count}";
+            var totalIterationsString = $"total iterations: {totalIterations}";
+            _output.WriteLine(OutputLevel.Minimal, $"Running container \"{outputContainerName}\", {plannedBenchmarksString}, {totalIterationsString}");
 
             #endregion
 
             AggregateException exception = null;
             var benchmarkReports = new List<BenchmarkReport>(_benchmarkPlans.Count);
+
             var startedAtUtc = DateTime.UtcNow;
             var durationSW = Stopwatch.StartNew();
 
@@ -67,7 +72,7 @@ namespace TinyBenchmark.Analysis
 
                 // Use progress only when level is < Normal
                 var progress = _output.IsShown(OutputLevel.Normal)
-                    ? default : _output.ProgressFor(OutputLevel.Minimal, totalItems: this.BenchmarkPlans.Count);
+                    ? default : _output.ProgressFor(OutputLevel.Minimal, totalItems: totalIterations);
 
                 _output.IndentLevel++;
 
@@ -112,7 +117,7 @@ namespace TinyBenchmark.Analysis
 
                         #endregion
 
-                        var report = benchmarkPlan.Run(() => CreateNew(this.Container.ContainerType));
+                        var report = benchmarkPlan.Run(() => CreateNew(this.Container.ContainerType), progress);
                         benchmarkReportsWithSameParameters.Add(report);
 
                         _output.IndentLevel--;
@@ -132,6 +137,7 @@ namespace TinyBenchmark.Analysis
             catch (Exception ex)
             {
                 exception = new AggregateException(ex);
+                _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.Message}");
             }
             finally
             {
@@ -160,7 +166,12 @@ namespace TinyBenchmark.Analysis
             foreach (var report in reports.Where(r => r != baselineReport))
             {
                 var avgDurationTicks = report.AvgIterationDuration.Ticks;
-                report.BaselineRatio = avgDurationTicks * 1.0m / avgBaselineDurationTicks;
+
+                var ratio = avgDurationTicks * 1.0m / avgBaselineDurationTicks;
+                var efficiency = avgBaselineDurationTicks * 1.0m / avgDurationTicks;
+                var avgTimeDifference = baselineReport.AvgIterationDuration - report.AvgIterationDuration;
+                report.BaselineStats = new BaselineStats(ratio, efficiency, avgTimeDifference);
+
                 EvaluateBaselineOnIterations(report.IterationReports);
             }
 
@@ -171,7 +182,11 @@ namespace TinyBenchmark.Analysis
                 foreach (var ir in iterationReports)
                 {
                     var durationTicks = ir.Duration.Ticks;
-                    ir.BaselineRatio = durationTicks * 1.0m / avgBaselineDurationTicks;
+
+                    var ratio = durationTicks * 1.0m / avgBaselineDurationTicks;
+                    var efficiency = avgBaselineDurationTicks * 1.0m / durationTicks;
+                    var avgTimeDifference = baselineReport.AvgIterationDuration - ir.Duration;
+                    ir.BaselineStats = new BaselineStats(ratio, efficiency, avgTimeDifference);
                 }
             }
         }

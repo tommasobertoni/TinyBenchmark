@@ -15,11 +15,9 @@ namespace TinyBenchmark
 
         public DateTime StartedAtUtc { get; }
 
-        public TimeSpan Warmup { get; }
-
         public TimeSpan Duration { get; }
 
-        public decimal? BaselineRatio { get; internal set; }
+        public BaselineStats BaselineStats { get; internal set; }
 
         public Exception Exception { get; }
 
@@ -30,16 +28,27 @@ namespace TinyBenchmark
             Parameters parameters,
             IEnumerable<Argument> arguments,
             DateTime startedAtUtc,
-            TimeSpan warmup,
             TimeSpan duration,
+            Exception exception = null)
+            : this(iterationNumber, parameters, arguments, startedAtUtc, duration, null, exception)
+        {
+        }
+
+        protected internal IterationReport(
+            int iterationNumber,
+            Parameters parameters,
+            IEnumerable<Argument> arguments,
+            DateTime startedAtUtc,
+            TimeSpan duration,
+            BaselineStats baselineStats,
             Exception exception = null)
         {
             this.IterationNumber = iterationNumber;
             this.Parameters = parameters;
             this.Arguments = arguments?.ToList().AsReadOnly();
             this.StartedAtUtc = startedAtUtc.ToUniversalTime();
-            this.Warmup = warmup;
             this.Duration = duration;
+            this.BaselineStats = baselineStats;
             this.Exception = exception;
         }
 

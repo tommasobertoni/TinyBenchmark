@@ -83,11 +83,21 @@ namespace TinyBenchmark
 
             AppendLine($"started:        {FormatAsLocal(r.StartedAtUtc)}");
             AppendLine($"duration:       {Format(r.Duration)}");
-            AppendLine($"avg. warmup:    {Format(r.AvgIterationWarmup)}");
+            AppendLine($"init:           {Format(r.Duration)}");
+            AppendLine($"warmup:         {Format(r.Warmup)}");
+            AppendLine($"iterations:     {r.IterationReports.Count}");
             AppendLine($"avg. duration:  {Format(r.AvgIterationDuration)}");
 
-            if (r.BaselineRatio.HasValue)
-                AppendLine($"ratio:          {FormatRatio(r.BaselineRatio.Value)}");
+            if (r.IsBaseline)
+            {
+                AppendLine($"BASELINE");
+            }
+            else if (r.BaselineStats != null)
+            {
+                AppendLine($"ratio:          {FormatRatio(r.BaselineStats.Ratio)}");
+                AppendLine($"efficiency:     {FormatEfficiency(r.BaselineStats.Efficiency)}");
+                AppendLine($"avg. time diff: {Format(r.BaselineStats.AvgTimeDifference)}");
+            }
 
             if (r.HasExceptions)
                 AppendLine($"threw {r.Exception.InnerExceptions.Count} exceptions");
@@ -120,11 +130,14 @@ namespace TinyBenchmark
             }
 
             AppendLine($"started:        {FormatAsLocal(ir.StartedAtUtc)}");
-            AppendLine($"warmup:         {Format(ir.Warmup)}");
             AppendLine($"duration:       {Format(ir.Duration)}");
 
-            if (ir.BaselineRatio.HasValue)
-                AppendLine($"ratio:          {FormatRatio(ir.BaselineRatio.Value)}");
+            if (ir.BaselineStats != null)
+            {
+                AppendLine($"ratio:          {FormatRatio(ir.BaselineStats.Ratio)}");
+                AppendLine($"efficiency:     {FormatEfficiency(ir.BaselineStats.Efficiency)}");
+                AppendLine($"avg. time diff: {Format(ir.BaselineStats.AvgTimeDifference)}");
+            }
 
             if (ir.Failed)
                 AppendLine($"[Failed] {ir.Exception.Message}");
@@ -162,7 +175,9 @@ namespace TinyBenchmark
 
         protected virtual string Format(TimeSpan timeSpan) => timeSpan.ToString();
 
-        protected virtual string FormatRatio(decimal ratio) => Math.Round(ratio, 5).ToString();
+        protected virtual string FormatRatio(decimal ratio) => Math.Round(ratio, 8).ToString();
+
+        protected virtual string FormatEfficiency(decimal ratio) => Math.Round(ratio, 5).ToString();
 
         #endregion
     }

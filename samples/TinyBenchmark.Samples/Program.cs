@@ -13,15 +13,13 @@ namespace TinyBenchmark.Samples
             var runner = new BenchmarkRunner(OutputLevel.Minimal);
 
             //var collectionsBenchmarksReport = RunAndPrint<CollectionsBenchmarks>();
-            var hashBenchmarksReport = RunAndPrint<HashBenchmarks>();
+            //var hashBenchmarksReport = RunAndPrint<HashBenchmarks>();
             //var linqBenchmarksReport = RunAndPrint<LinqBenchmarks>();
+            var microBenchmarksReport = RunAndPrint<MicroBenchmarks>();
             //var miscBenchmarksReport = RunAndPrint<MiscBenchmarks>();
             //var noBenchmarksReport = RunAndPrint<NoBenchmarks>();
 
-            Console.WriteLine();
-            Console.WriteLine("Test:");
-
-            var text = hashBenchmarksReport.ExportAsText();
+            var text = microBenchmarksReport.ExportAsText(includeIterations: false);
             Console.WriteLine(text);
 
             //Console.WriteLine();

@@ -46,7 +46,9 @@ namespace TinyBenchmark.Analysis
             this.IsBaseline = isBaseline;
         }
 
-        internal BenchmarkReport Run<TBenchmarksContainer>(Func<TBenchmarksContainer> benchmarksContainerFactory)
+        internal BenchmarkReport Run<TBenchmarksContainer>(
+            Func<TBenchmarksContainer> benchmarksContainerFactory,
+            ProgressWriter progress)
         {
             #region Output
 
@@ -63,16 +65,41 @@ namespace TinyBenchmark.Analysis
             var iterationReports = new List<IterationReport>(this.Iterations);
 
             AggregateException exception = null;
+            Stopwatch initSW = null;
+            Stopwatch warmupSW = null;
 
             var startedAtUtc = DateTime.UtcNow;
             var durationSW = Stopwatch.StartNew();
 
             try
             {
+                // Create
+
+                initSW = Stopwatch.StartNew();
+
+                var benchmarksContainer = CreateContainer(benchmarksContainerFactory);
+
+                initSW.Stop();
+
+                // Warmup
+
+                warmupSW = Stopwatch.StartNew();
+
+                WarmupContainer(benchmarksContainer);
+
+                warmupSW.Stop();
+
+                // Run
+
+                var methodParameters = this.Arguments?.AsMethodParameters();
+                var executable = this.Benchmark.Executable;
+
                 for (int iterationNumber = 0; iterationNumber < this.Iterations; iterationNumber++)
                 {
-                    var iterationReport = RunIteration(benchmarksContainerFactory, iterationNumber);
+                    var iterationReport = RunIteration(benchmarksContainer, executable, methodParameters, iterationNumber);
                     iterationReports.Add(iterationReport);
+
+                    progress?.IncreaseProcessedItems();
 
                     #region Output
 
@@ -90,7 +117,10 @@ namespace TinyBenchmark.Analysis
             }
             catch (Exception ex)
             {
+                initSW.Stop();
+                warmupSW.Stop();
                 exception = new AggregateException(ex);
+                _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.Message}");
             }
             finally
             {
@@ -111,53 +141,47 @@ namespace TinyBenchmark.Analysis
                 this.Benchmark.Name,
                 startedAtUtc,
                 durationSW.Elapsed,
+                initSW.Elapsed,
+                warmupSW.Elapsed,
                 this.IsBaseline,
+                null,
                 iterationReports,
                 exception);
         }
 
         protected virtual IterationReport RunIteration<TBenchmarksContainer>(
-            Func<TBenchmarksContainer> benchmarksContainerFactory,
+            TBenchmarksContainer benchmarksContainer,
+            MethodInfo executable,
+            object[] methodParameters,
             int iterationNumber)
         {
             GC.Collect();
 
             Exception exception = null;
 
-            Stopwatch warmupSW = null;
-            Stopwatch durationSW = null;
+            _output.IndentLevel++;
+
             var startedAtUtc = DateTime.UtcNow;
+            Stopwatch durationSW = Stopwatch.StartNew();
 
             try
             {
-                warmupSW = Stopwatch.StartNew();
-
-                var benchmarksContainer = PrepareWarmContainer(benchmarksContainerFactory);
-
-                warmupSW.Stop();
-
-
-                durationSW = Stopwatch.StartNew();
-
-                _output.IndentLevel++;
-
-                var methodParameters = this.Arguments?.AsMethodParameters();
-                this.Benchmark.Executable.Invoke(benchmarksContainer, methodParameters);
-
+                executable.Invoke(benchmarksContainer, methodParameters);
                 durationSW.Stop();
             }
             catch (TargetInvocationException ex)
             {
                 exception = ex.InnerException;
+                _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.InnerException.Message}");
             }
             catch (Exception ex)
             {
                 exception = ex;
+                _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.Message}");
             }
             finally
             {
                 _output.IndentLevel--;
-                warmupSW.Stop();
                 durationSW.Stop();
             }
 
@@ -172,18 +196,23 @@ namespace TinyBenchmark.Analysis
                 parametersModels,
                 argumentModels,
                 startedAtUtc,
-                warmupSW.Elapsed,
                 durationSW.Elapsed,
                 exception);
         }
 
-        protected virtual object PrepareWarmContainer<TBenchmarksContainer>(Func<TBenchmarksContainer> benchmarksContainerFactory)
+        private object CreateContainer<TBenchmarksContainer>(Func<TBenchmarksContainer> benchmarksContainerFactory)
         {
             var benchmarksContainer = benchmarksContainerFactory();
 
             this.ParametersSet?.ApplyTo(benchmarksContainer);
 
             this.Init?.Executable.Invoke(benchmarksContainer, null);
+
+            return benchmarksContainer;
+        }
+
+        protected virtual object WarmupContainer<TBenchmarksContainer>(TBenchmarksContainer benchmarksContainer)
+        {
             this.Benchmark?.InitWithReference?.Executable.Invoke(benchmarksContainer, null);
 
             if (this.Warmups.Any())

@@ -13,13 +13,15 @@ namespace TinyBenchmark
 
         public TimeSpan Duration { get; }
 
-        public TimeSpan AvgIterationWarmup { get; }
+        public TimeSpan InitDuration { get; }
+
+        public TimeSpan Warmup { get; }
 
         public TimeSpan AvgIterationDuration { get; }
 
         internal bool IsBaseline { get; }
 
-        public decimal? BaselineRatio { get; internal set; }
+        public BaselineStats BaselineStats { get; internal set; }
 
         public IReadOnlyList<IterationReport> IterationReports { get; }
 
@@ -35,24 +37,40 @@ namespace TinyBenchmark
             string name,
             DateTime startedAtUtc,
             TimeSpan duration,
+            TimeSpan initDuration,
+            TimeSpan warmup,
             bool isBaseline,
+            IEnumerable<IterationReport> iterationReports,
+            AggregateException exception = null)
+            : this(name, startedAtUtc, duration, initDuration, warmup, isBaseline, null, iterationReports, exception)
+        {
+        }
+
+        protected internal BenchmarkReport(
+            string name,
+            DateTime startedAtUtc,
+            TimeSpan duration,
+            TimeSpan initDuration,
+            TimeSpan warmup,
+            bool isBaseline,
+            BaselineStats baselineStats,
             IEnumerable<IterationReport> iterationReports,
             AggregateException exception = null)
         {
             this.Name = name;
             this.StartedAtUtc = startedAtUtc.ToUniversalTime();
             this.Duration = duration;
+            this.InitDuration = initDuration;
+            this.Warmup = warmup;
 
             this.IsBaseline = isBaseline;
-            if (this.IsBaseline)
-                this.BaselineRatio = 1.0m;
+            this.BaselineStats = baselineStats;
 
             this.IterationReports = iterationReports?.ToList().AsReadOnly();
             this.AppliedParameters = this.IterationReports?.Select(ir => ir.Parameters).Distinct().ToList();
             this.Exception = exception;
 
             this.SuccessfulIterations = this.IterationReports?.Count(ir => ir.Failed == false) ?? 0;
-            this.AvgIterationWarmup = iterationReports == null ? default : Average(ir => ir.Warmup);
             this.AvgIterationDuration = iterationReports == null ? default : Average(ir => ir.Duration);
 
             // Local functions
