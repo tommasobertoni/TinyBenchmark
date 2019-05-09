@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>TinyBenchmark.Exporters</id>
-    <version>0.1.0-alpha6</version>
+    <version>0.1.0-alpha1</version>
     <title>TinyBenchmark.Exporters</title>
     <authors>Tommaso Bertoni</authors>
     <owners>tommasobertoni</owners>

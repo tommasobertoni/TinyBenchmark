@@ -1,8 +1,8 @@
 # TinyBenchmark
 
 [![Nuget](https://img.shields.io/nuget/v/TinyBenchmark.svg?logo=nuget)](https://www.nuget.org/packages/TinyBenchmark)
-[![GitHub](https://img.shields.io/github/license/tommasobertoni/TinyBenchmark.svg)](https://github.com/tommasobertoni/TinyBenchmark/blob/master/LICENSE)
-[![Samples](https://img.shields.io/badge/samples-11-brightgreen.svg)](https://github.com/tommasobertoni/TinyBenchmark/tree/master/samples/TinyBenchmark.Samples/Benchmarks)
+[![License](https://img.shields.io/github/license/tommasobertoni/TinyBenchmark.svg)](https://github.com/tommasobertoni/TinyBenchmark/blob/master/LICENSE)
+[![Samples](https://img.shields.io/badge/samples-12-brightgreen.svg)](https://github.com/tommasobertoni/TinyBenchmark/tree/master/samples/TinyBenchmark.Samples/Benchmarks)
 
 _Define benchmarks with ease!_
 
