@@ -94,6 +94,8 @@ namespace TinyBenchmark.Analysis
                 var methodParameters = this.Arguments?.AsMethodParameters();
                 var executable = this.Benchmark.Executable;
 
+                GC.Collect();
+
                 for (int iterationNumber = 0; iterationNumber < this.Iterations; iterationNumber++)
                 {
                     var iterationReport = RunIteration(benchmarksContainer, executable, methodParameters, iterationNumber);
@@ -120,7 +122,9 @@ namespace TinyBenchmark.Analysis
                 initSW.Stop();
                 warmupSW.Stop();
                 exception = new AggregateException(ex);
-                _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.Message}");
+
+                if (!_output.IsShown(OutputLevel.Silent) && !_output.IsShown(OutputLevel.Minimal))
+                    _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.Message}");
             }
             finally
             {
@@ -155,8 +159,6 @@ namespace TinyBenchmark.Analysis
             object[] methodParameters,
             int iterationNumber)
         {
-            GC.Collect();
-
             Exception exception = null;
 
             _output.IndentLevel++;
@@ -172,12 +174,16 @@ namespace TinyBenchmark.Analysis
             catch (TargetInvocationException ex)
             {
                 exception = ex.InnerException;
-                _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.InnerException.Message}");
+
+                if (!_output.IsShown(OutputLevel.Silent) && !_output.IsShown(OutputLevel.Minimal))
+                    _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.InnerException.Message}");
             }
             catch (Exception ex)
             {
                 exception = ex;
-                _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.Message}");
+
+                if (!_output.IsShown(OutputLevel.Silent) && !_output.IsShown(OutputLevel.Minimal))
+                    _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.Message}");
             }
             finally
             {

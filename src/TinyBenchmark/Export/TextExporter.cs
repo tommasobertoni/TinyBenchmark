@@ -83,7 +83,7 @@ namespace TinyBenchmark
 
             AppendLine($"started:        {FormatAsLocal(r.StartedAtUtc)}");
             AppendLine($"duration:       {Format(r.Duration)}");
-            AppendLine($"init:           {Format(r.Duration)}");
+            AppendLine($"init:           {Format(r.InitDuration)}");
             AppendLine($"warmup:         {Format(r.Warmup)}");
             AppendLine($"iterations:     {r.IterationReports.Count}");
             AppendLine($"avg. duration:  {Format(r.AvgIterationDuration)}");

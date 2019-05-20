@@ -137,7 +137,9 @@ namespace TinyBenchmark.Analysis
             catch (Exception ex)
             {
                 exception = new AggregateException(ex);
-                _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.Message}");
+
+                if (!_output.IsShown(OutputLevel.Silent) && !_output.IsShown(OutputLevel.Minimal))
+                    _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.Message}");
             }
             finally
             {
