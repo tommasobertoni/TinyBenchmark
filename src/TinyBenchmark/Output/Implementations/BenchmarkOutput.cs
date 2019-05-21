@@ -16,10 +16,13 @@ namespace TinyBenchmark
             get { return _indentLevel; }
             set
             {
-                _indentLevel = value;
+                if (_maxOutputLevel > OutputLevel.ErrorsOnly)
+                {
+                    _indentLevel = value;
 
-                if (_indentLevel < 0)
-                    _indentLevel = 0;
+                    if (_indentLevel < 0)
+                        _indentLevel = 0;
+                }
             }
         }
 

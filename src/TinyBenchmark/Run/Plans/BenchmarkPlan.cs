@@ -109,20 +109,7 @@ namespace TinyBenchmark.Run
                     var iterationReport = RunIteration(executable, iterationNumber);
                     iterationReports.Add(iterationReport);
 
-                    #region Output
-
                     progress?.IncreaseProcessedItems();
-
-                    if (iterationReport.Failed)
-                    {
-                        var failedOutput = _output.IsShown(OutputLevel.Verbose)
-                            ? $"[FAILED] => {LimitTo(iterationReport.Exception.Message, 200)}"
-                            : $"[FAILED]";
-
-                        _output.WriteLine(failedOutput);
-                    }
-
-                    #endregion
                 }
             }
             catch (Exception ex)
@@ -130,9 +117,7 @@ namespace TinyBenchmark.Run
                 initSW.Stop();
                 warmupSW.Stop();
                 exception = new AggregateException(ex);
-
-                if (!_output.IsShown(OutputLevel.Silent) && !_output.IsShown(OutputLevel.Minimal))
-                    _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.Message}");
+                _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.Message.LimitTo(200)}");
             }
             finally
             {
@@ -178,16 +163,12 @@ namespace TinyBenchmark.Run
             catch (TargetInvocationException ex)
             {
                 exception = ex.InnerException;
-
-                if (!_output.IsShown(OutputLevel.Silent) && !_output.IsShown(OutputLevel.Minimal))
-                    _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.InnerException.Message}");
+                _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.InnerException.Message.LimitTo(200)}");
             }
             catch (Exception ex)
             {
                 exception = ex;
-
-                if (!_output.IsShown(OutputLevel.Silent) && !_output.IsShown(OutputLevel.Minimal))
-                    _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.Message}");
+                _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.Message.LimitTo(200)}");
             }
             finally
             {
@@ -209,22 +190,5 @@ namespace TinyBenchmark.Run
                 durationSW.Elapsed,
                 exception);
         }
-
-        #region Helpers
-
-        private string LimitTo(string message, int maxLength)
-        {
-            if (maxLength < 0) throw new ArgumentException("Max length must be non-negative.");
-
-            int messageLength = message?.Length ?? 0;
-
-            if (messageLength <= maxLength)
-                return message;
-
-            var croppedMessage = message.Substring(0, maxLength);
-            return $"{croppedMessage}...";
-        }
-
-        #endregion
     }
 }

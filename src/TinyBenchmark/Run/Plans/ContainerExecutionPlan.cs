@@ -123,7 +123,6 @@ namespace TinyBenchmark.Run
                         benchmarkReportsWithSameParameters.Add(report);
 
                         _output.IndentLevel--;
-                        progress?.IncreaseProcessedItems();
                     }
 
                     // The baseline is evaluated on every group of benchmarks with the same parameters.
@@ -139,9 +138,7 @@ namespace TinyBenchmark.Run
             catch (Exception ex)
             {
                 exception = new AggregateException(ex);
-
-                if (!_output.IsShown(OutputLevel.Silent) && !_output.IsShown(OutputLevel.Minimal))
-                    _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.Message}");
+                _output.WriteLine(OutputLevel.ErrorsOnly, $"[Error] {ex.Message.LimitTo(200)}");
             }
             finally
             {
