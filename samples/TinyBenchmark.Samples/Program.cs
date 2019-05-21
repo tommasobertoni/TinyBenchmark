@@ -10,12 +10,15 @@ namespace TinyBenchmark.Samples
         {
             const string separator = "------------------------------------------------------------";
 
+            //var rb = new ReflectionBenchmarks();
+            //rb.Manual();
+
             var runner = new BenchmarkRunner(OutputLevel.Minimal);
 
             //var collectionsBenchmarksReport = RunAndPrint<CollectionsBenchmarks>();
             //var hashBenchmarksReport = RunAndPrint<HashBenchmarks>();
             //var linqBenchmarksReport = RunAndPrint<LinqBenchmarks>();
-            var microBenchmarksReport = RunAndPrint<MicroBenchmarks>();
+            var microBenchmarksReport = RunAndPrint<CollectionsBenchmarks>();
             //var miscBenchmarksReport = RunAndPrint<MiscBenchmarks>();
             //var noBenchmarksReport = RunAndPrint<NoBenchmarks>();
 

@@ -12,16 +12,16 @@ namespace TinyBenchmark.Analysis
 
         public int Order { get; }
 
-        public MethodInfo Executable { get; }
+        public MethodInfo Method { get; }
 
         public WarmupReference(
             string name,
             int order,
-            MethodInfo executable)
+            MethodInfo method)
         {
             this.Name = name;
             this.Order = order;
-            this.Executable = executable;
+            this.Method = method;
         }
     }
 }

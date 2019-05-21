@@ -4,8 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using TinyBenchmark.Analysis;
 
-namespace TinyBenchmark.Analysis
+namespace TinyBenchmark.Run
 {
     internal class BenchmarkPlan
     {
@@ -24,9 +25,11 @@ namespace TinyBenchmark.Analysis
         public bool IsBaseline { get; }
 
         private readonly BenchmarkOutput _output;
+        private readonly ExecutableBuilder _executableBuilder;
 
         public BenchmarkPlan(
             BenchmarkOutput output,
+            ExecutableBuilder executableBuilder,
             InitReference init,
             IEnumerable<WarmupReference> warmups,
             ParametersSet parametersSet,
@@ -36,6 +39,7 @@ namespace TinyBenchmark.Analysis
             bool isBaseline = false)
         {
             _output = output;
+            _executableBuilder = executableBuilder;
 
             this.Init = init;
             this.Warmups = warmups?.ToList().AsReadOnly();
@@ -47,7 +51,7 @@ namespace TinyBenchmark.Analysis
         }
 
         internal BenchmarkReport Run<TBenchmarksContainer>(
-            Func<TBenchmarksContainer> benchmarksContainerFactory,
+            TBenchmarksContainer benchmarksContainer,
             ProgressWriter progress)
         {
             #region Output
@@ -68,42 +72,46 @@ namespace TinyBenchmark.Analysis
             Stopwatch initSW = null;
             Stopwatch warmupSW = null;
 
+            var methodParameters = this.Arguments?.AsMethodParameters();
+
+            var executable = _executableBuilder
+                .Using(benchmarksContainer)
+                .With(this.Init)
+                .With(this.Benchmark?.InitWithReference)
+                .With(this.Warmups)
+                .For(this.Benchmark.Method, methodParameters)
+                .Create();
+
             var startedAtUtc = DateTime.UtcNow;
             var durationSW = Stopwatch.StartNew();
 
             try
             {
-                // Create
+                // Init
 
                 initSW = Stopwatch.StartNew();
-
-                var benchmarksContainer = CreateContainer(benchmarksContainerFactory);
-
+                this.ParametersSet?.ApplyTo(benchmarksContainer);
+                executable.ExecuteInits();
                 initSW.Stop();
 
                 // Warmup
 
                 warmupSW = Stopwatch.StartNew();
-
-                WarmupContainer(benchmarksContainer);
-
+                executable.ExecuteWarmups();
                 warmupSW.Stop();
 
                 // Run
 
-                var methodParameters = this.Arguments?.AsMethodParameters();
-                var executable = this.Benchmark.Executable;
-
-                GC.Collect();
-
                 for (int iterationNumber = 0; iterationNumber < this.Iterations; iterationNumber++)
                 {
-                    var iterationReport = RunIteration(benchmarksContainer, executable, methodParameters, iterationNumber);
+                    GC.Collect();
+
+                    var iterationReport = RunIteration(executable, iterationNumber);
                     iterationReports.Add(iterationReport);
 
-                    progress?.IncreaseProcessedItems();
-
                     #region Output
+
+                    progress?.IncreaseProcessedItems();
 
                     if (iterationReport.Failed)
                     {
@@ -153,11 +161,7 @@ namespace TinyBenchmark.Analysis
                 exception);
         }
 
-        protected virtual IterationReport RunIteration<TBenchmarksContainer>(
-            TBenchmarksContainer benchmarksContainer,
-            MethodInfo executable,
-            object[] methodParameters,
-            int iterationNumber)
+        protected virtual IterationReport RunIteration(Executable executable, int iterationNumber)
         {
             Exception exception = null;
 
@@ -168,7 +172,7 @@ namespace TinyBenchmark.Analysis
 
             try
             {
-                executable.Invoke(benchmarksContainer, methodParameters);
+                executable.ExecuteBenchmark();
                 durationSW.Stop();
             }
             catch (TargetInvocationException ex)
@@ -204,32 +208,6 @@ namespace TinyBenchmark.Analysis
                 startedAtUtc,
                 durationSW.Elapsed,
                 exception);
-        }
-
-        private object CreateContainer<TBenchmarksContainer>(Func<TBenchmarksContainer> benchmarksContainerFactory)
-        {
-            var benchmarksContainer = benchmarksContainerFactory();
-
-            this.ParametersSet?.ApplyTo(benchmarksContainer);
-
-            this.Init?.Executable.Invoke(benchmarksContainer, null);
-
-            return benchmarksContainer;
-        }
-
-        protected virtual object WarmupContainer<TBenchmarksContainer>(TBenchmarksContainer benchmarksContainer)
-        {
-            this.Benchmark?.InitWithReference?.Executable.Invoke(benchmarksContainer, null);
-
-            if (this.Warmups.Any())
-            {
-                foreach (var warmup in this.Warmups)
-                {
-                    warmup.Executable.Invoke(benchmarksContainer, null);
-                }
-            }
-
-            return benchmarksContainer;
         }
 
         #region Helpers

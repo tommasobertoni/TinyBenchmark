@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TinyBenchmark.Analysis;
 
-namespace TinyBenchmark.Analysis
+namespace TinyBenchmark.Run
 {
     internal class BenchmarksPlanner
     {
@@ -54,6 +55,7 @@ namespace TinyBenchmark.Analysis
             {
                 var benchmarkPlan = new BenchmarkPlan(
                     _output,
+                    new ExecutableBuilder(),
                     _scanner.Init,
                     benchmark.WarmupCollection,
                     parametersSet,

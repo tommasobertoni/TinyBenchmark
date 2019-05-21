@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using TinyBenchmark.Analysis;
 using TinyBenchmark.Attributes;
+using TinyBenchmark.Run;
 
 namespace TinyBenchmark
 {
@@ -21,8 +22,6 @@ namespace TinyBenchmark
 
         public BenchmarksContainerReport Run(Type benchmarksContainerType)
         {
-            var output = new BenchmarkOutput(this.MaxOutputLevel);
-
             var scanner = new BenchmarksScanner(new BenchmarkOutput(this.MaxOutputLevel));
             var planner = new BenchmarksPlanner(new BenchmarkOutput(this.MaxOutputLevel), scanner);
 

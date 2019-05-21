@@ -20,7 +20,7 @@ namespace TinyBenchmark.Samples
         public void ListWarmup() => _list = new List<int>();
 
         [WarmupWith(nameof(ListWarmup))]
-        [Benchmark(Order = 1)]
+        [Benchmark(Order = 1, Baseline = true)]
         public void List()
         {
             for (int i = 0; i < this.ItemsCount; i++)

@@ -4,8 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TinyBenchmark.Analysis;
 
-namespace TinyBenchmark.Analysis
+namespace TinyBenchmark.Run
 {
     internal class ContainerExecutionPlan
     {
@@ -117,7 +118,8 @@ namespace TinyBenchmark.Analysis
 
                         #endregion
 
-                        var report = benchmarkPlan.Run(() => CreateNew(this.Container.ContainerType), progress);
+                        var benchmarksContainer = CreateNew(this.Container.ContainerType);
+                        var report = benchmarkPlan.Run(benchmarksContainer, progress);
                         benchmarkReportsWithSameParameters.Add(report);
 
                         _output.IndentLevel--;

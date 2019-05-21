@@ -57,14 +57,14 @@ namespace TinyBenchmark.Analysis
             _output.WriteLine(OutputLevel.Normal, $"Found container {this.Container.Name}");
 
             if (this.Container.InitContainer != null)
-                _output.WriteLine(OutputLevel.Verbose, $"Found init container named {this.Container.InitContainer.Executable.Name}");
+                _output.WriteLine(OutputLevel.Verbose, $"Found init container named {this.Container.InitContainer.Method.Name}");
 
             // Init
 
             this.Init = TryGetInitReference(benchmarksContainerType);
 
             if (this.Init != null)
-                _output.WriteLine(OutputLevel.Verbose, $"Found init named {this.Init.Executable.Name}");
+                _output.WriteLine(OutputLevel.Verbose, $"Found init named {this.Init.Method.Name}");
 
             // Benchmarks
 
@@ -174,25 +174,25 @@ namespace TinyBenchmark.Analysis
 
             BenchmarkReference CreateBenchmarkReference((MethodInfo method, BenchmarkAttribute attribute) benchmark)
             {
-                var (executable, attribute) = benchmark;
+                var (method, attribute) = benchmark;
 
-                var initWithReference = TryGetInitWithReference(executable);
+                var initWithReference = TryGetInitWithReference(method);
 
-                var warmupCollection = CreateWarmupCollection(executable);
+                var warmupCollection = CreateWarmupCollection(method);
                 var orderedWarmupCollection = warmupCollection.OrderBy(w => w.Order);
 
-                var argumentsCollection = CreateArgumentsCollection(executable);
+                var argumentsCollection = CreateArgumentsCollection(method);
 
                 var iterations = attribute.Iterations > 0
                     ? attribute.Iterations
                     : throw new InvalidOperationException($"{nameof(attribute.Iterations)} must be a positive number.");
 
                 var reference = new BenchmarkReference(
-                    attribute.Name ?? executable.Name,
+                    attribute.Name ?? method.Name,
                     initWithReference,
                     orderedWarmupCollection,
                     argumentsCollection,
-                    executable,
+                    method,
                     iterations,
                     attribute.Baseline);
 
@@ -200,9 +200,9 @@ namespace TinyBenchmark.Analysis
             }
         }
 
-        private InitReference TryGetInitWithReference(MethodInfo executable)
+        private InitReference TryGetInitWithReference(MethodInfo method)
         {
-            var initWithAttributes = executable.GetCustomAttributes<InitWithAttribute>()?.ToList();
+            var initWithAttributes = method.GetCustomAttributes<InitWithAttribute>()?.ToList();
 
             if (initWithAttributes?.Count > 1)
                 throw new InvalidOperationException($"Multiple {nameof(InitContainerAttribute)} not allowed in the same container.");
@@ -210,7 +210,7 @@ namespace TinyBenchmark.Analysis
             var attr = initWithAttributes.FirstOrDefault();
             if (attr == null) return null;
 
-            var containerType = executable.DeclaringType;
+            var containerType = method.DeclaringType;
 
             var initWithMethod = GetMethods(containerType).FirstOrDefault(m => m.Name == attr.MethodName);
 
@@ -226,13 +226,13 @@ namespace TinyBenchmark.Analysis
             return new InitReference(initWithMethod);
         }
 
-        private IEnumerable<ArgumentsReference> CreateArgumentsCollection(MethodInfo executable)
+        private IEnumerable<ArgumentsReference> CreateArgumentsCollection(MethodInfo method)
         {
-            var argumentsAttributes = executable.GetCustomAttributes<ArgumentsAttribute>();
+            var argumentsAttributes = method.GetCustomAttributes<ArgumentsAttribute>();
 
             if (argumentsAttributes != null)
             {
-                var expectedMethodArguments = executable.GetParameters().ToList();
+                var expectedMethodArguments = method.GetParameters().ToList();
 
                 foreach (var argumentsAttribute in argumentsAttributes)
                 {
@@ -270,7 +270,7 @@ namespace TinyBenchmark.Analysis
             string ToString(IEnumerable<object> args) => string.Join(", ", args.Select(x => x.ToString()));
 
             string GetExceptionPrefix(IEnumerable<object> args) =>
-                $"Mismatching arguments on method {executable.DeclaringType.Name}.{executable.Name}, arguments: {ToString(args)}";
+                $"Mismatching arguments on method {method.DeclaringType.Name}.{method.Name}, arguments: {ToString(args)}";
 
             InvalidOperationException ArgumentsNotAccepted(IEnumerable<object> args) => new InvalidOperationException(
                 $"{GetExceptionPrefix(args)}: the method doesn't accept arguments.");
@@ -282,13 +282,13 @@ namespace TinyBenchmark.Analysis
                 $"{GetExceptionPrefix(args)}: expected {expected.Name} but {actual.Name} was provided.");
         }
 
-        private IEnumerable<WarmupReference> CreateWarmupCollection(MethodInfo executable)
+        private IEnumerable<WarmupReference> CreateWarmupCollection(MethodInfo method)
         {
-            var warmupAttributes = executable.GetCustomAttributes<WarmupWithAttribute>();
+            var warmupAttributes = method.GetCustomAttributes<WarmupWithAttribute>();
 
             if (warmupAttributes.Any())
             {
-                var containerType = executable.DeclaringType;
+                var containerType = method.DeclaringType;
 
                 foreach (var attr in warmupAttributes)
                 {

@@ -16,7 +16,7 @@ namespace TinyBenchmark.Analysis
 
         public IReadOnlyList<ArgumentsReference> ArgumentsCollection { get; }
 
-        public MethodInfo Executable { get; }
+        public MethodInfo Method { get; }
 
         public int Iterations { get; }
 
@@ -27,7 +27,7 @@ namespace TinyBenchmark.Analysis
             InitReference initWithReference,
             IEnumerable<WarmupReference> warmupCollection,
             IEnumerable<ArgumentsReference> argumentsCollection,
-            MethodInfo executable,
+            MethodInfo method,
             int iterations,
             bool isBaseline = false)
         {
@@ -35,7 +35,7 @@ namespace TinyBenchmark.Analysis
             this.InitWithReference = initWithReference;
             this.WarmupCollection = warmupCollection?.ToList().AsReadOnly();
             this.ArgumentsCollection = argumentsCollection?.ToList().AsReadOnly();
-            this.Executable = executable;
+            this.Method = method;
             this.Iterations = iterations;
             this.IsBaseline = isBaseline;
         }

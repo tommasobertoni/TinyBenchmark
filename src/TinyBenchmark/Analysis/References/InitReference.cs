@@ -8,12 +8,12 @@ namespace TinyBenchmark.Analysis
 {
     internal class InitReference
     {
-        public MethodInfo Executable { get; }
+        public MethodInfo Method { get; }
 
         public InitReference(
-            MethodInfo executable)
+            MethodInfo method)
         {
-            this.Executable = executable;
+            this.Method = method;
         }
     }
 }
