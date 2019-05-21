@@ -19,7 +19,7 @@ namespace TinyBenchmark
 
         public TimeSpan AvgIterationDuration { get; }
 
-        internal bool IsBaseline { get; }
+        public bool IsBaseline { get; }
 
         public BaselineStats BaselineStats { get; internal set; }
 
