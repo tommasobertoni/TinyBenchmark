@@ -26,7 +26,7 @@ _**Jump to**_
   - [**[Param]**: defines all the possible values of a property that will be used by all the benchmarks](#param-attribute)
   - [**[Init]**: identifies an initialization method to be executed before _each_ benchmark](#init-attribute)
   - [**[InitWith]**: identifies an initialization method to be executed before a benchmark](#initwith-attribute)
-  - [**[BenchmarksContainer]**: defines additiona information about the class that contains the benchmarks](#benchmarkscontainer-attribute)
+  - [**[BenchmarksContainer]**: defines additional information about the class that contains the benchmarks](#benchmarkscontainer-attribute)
   - [**[InitContainer]**: identifies an initialization method to be executed _once_ before every benchmark](#initcontainer-attribute)
   
 ### Run your first benchmark
