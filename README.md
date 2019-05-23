@@ -18,7 +18,17 @@ _**Jump to**_
   - [Named benchmarks](#named-benchmarks)
   - [Benchmarks comparison](#benchmarks-comparison)
   - [Benchmarks output](#benchmarks-output)
-
+  
+- _**Attributes**_
+  - [**[Benchmark]**: identifies a benchmark method](#benchmark-attribute)
+  - [**[Arguments]**: defines the benchmark method arguments](#arguments-attribute)
+  - [**[WarmupWith]**: identifies a warmup method to be executed before a benchmark](#warmupwith-attribute)
+  - [**[Param]**: defines all the possible values of a property that will be used by all the benchmarks](#param-attribute)
+  - [**[Init]**: identifies an initialization method to be executed before _each_ benchmark](#init-attribute)
+  - [**[InitWith]**: identifies an initialization method to be executed before a benchmark](#initwith-attribute)
+  - [**[BenchmarksContainer]**: defines additiona information about the class that contains the benchmarks](#benchmarkscontainer-attribute)
+  - [**[InitContainer]**: identifies an initialization method to be executed _once_ before every benchmark](#initcontainer-attribute)
+  
 ### Run your first benchmark
 
 ```csharp
@@ -220,3 +230,19 @@ class BenchmarksContainer
     }
 }
 ```
+
+### Benchmark attribute
+
+### Arguments attribute
+
+### WarmupWith attribute
+
+### Param attribute
+
+### Init attribute
+
+### InitWith attribute
+
+### BenchmarksContainer attribute
+
+### InitContainer attribute
