@@ -17,7 +17,7 @@ _**Jump to**_
   - [Average the results over multiple iterations](#average-the-results-over-multiple-iterations)
   - [Named benchmarks](#named-benchmarks)
   - [Benchmarks comparison](#benchmarks-comparison)
-  - [Benchmarks outout](#benchmarks-output)
+  - [Benchmarks output](#benchmarks-output)
 
 ### Run your first benchmark
 
