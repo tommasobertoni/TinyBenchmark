@@ -71,13 +71,13 @@
         </member>
         <member name="P:TinyBenchmark.Attributes.BenchmarkAttribute.Order">
             <summary>
-            Defines the order by which the benchmark should run against the other benchmarks contained in the same class (container).
+            Defines the order by which the benchmark should run against the other benchmarks contained in the same container.
             The lower the value, the earlier the benchmark will be invoked.
             </summary>
         </member>
         <member name="P:TinyBenchmark.Attributes.BenchmarkAttribute.Baseline">
             <summary>
-            Defines if this benchmark will be used as a baseline for comparing the other benchmarks contained in the same class (container).
+            Defines if this benchmark will be used as a baseline for comparing the other benchmarks contained in the same container.
             Only one benchmark per container can be a baseline.
             </summary>
         </member>
@@ -93,7 +93,7 @@
         </member>
         <member name="T:TinyBenchmark.Attributes.InitAttribute">
             <summary>
-            Identifies an initialization method to be executed before each benchmark in the class (container).
+            Identifies an initialization method to be executed before each benchmark in the container.
             </summary>
         </member>
         <member name="T:TinyBenchmark.Attributes.InitContainerAttribute">
@@ -127,7 +127,7 @@
             <summary>
             Defines all the possible values of a property.
             </summary>
-            <param name="values">The property values that will be used by the benchmarks in the same class (container).</param>
+            <param name="values">The property values that will be used by the benchmarks in the same container.</param>
         </member>
         <member name="T:TinyBenchmark.Attributes.WarmupWithAttribute">
             <summary>
@@ -219,24 +219,6 @@
             <summary>
             Defines an indentation level for the text.
             </summary>
-        </member>
-        <member name="M:TinyBenchmark.TextExporter.Visit(TinyBenchmark.BenchmarksContainerReport)">
-            <summary>
-            Visits a benchmarks container report to create an export.
-            </summary>
-            <param name="cr">The benchmarks container report.</param>
-        </member>
-        <member name="M:TinyBenchmark.TextExporter.Visit(TinyBenchmark.BenchmarkReport)">
-            <summary>
-            Visits a benchmark report to create an export.
-            </summary>
-            <param name="r">The benchmark report.</param>
-        </member>
-        <member name="M:TinyBenchmark.TextExporter.Visit(TinyBenchmark.IterationReport)">
-            <summary>
-            Visits a benchmark iteration report to create an export.
-            </summary>
-            <param name="ir">The benchmark iteration report.</param>
         </member>
         <member name="M:TinyBenchmark.TextExporter.GetText">
             <summary>
@@ -390,6 +372,155 @@
             Rich logs with many details about the steps of the execution.
             </summary>
         </member>
+        <member name="T:TinyBenchmark.BenchmarkReport">
+            <summary>
+            The report of a benchmark.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarkReport.Name">
+            <summary>
+            The name of this benchmark.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarkReport.StartedAtUtc">
+            <summary>
+            The UTC time of when this benchmark started.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarkReport.Duration">
+            <summary>
+            The total duration of this benchmark.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarkReport.InitDuration">
+            <summary>
+            The duration of the initialization.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarkReport.Warmup">
+            <summary>
+            The duration of the warm-up.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarkReport.AvgIterationDuration">
+            <summary>
+            The average duration of all the iterations of this benchmark.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarkReport.IsBaseline">
+            <summary>
+            Indicates whether or not this benchmark was marked as a baseline for comparing the other benchmarks in the same container.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarkReport.BaselineStats">
+            <summary>
+            The comparison data against the baseline benchmark's results.
+            It's null when there was no baseline benchmark or when this is the baseline benchmark.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarkReport.IterationReports">
+            <summary>
+            The reports of the iterations of this benchmark.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarkReport.AppliedParameters">
+            <summary>
+            The parameters that were applied to the container right before running this benchmark.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarkReport.SuccessfulIterations">
+            <summary>
+            The number of successful iterations.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarkReport.Exception">
+            <summary>
+            The exceptions thrown during the execution of this benchmark.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarkReport.HasExceptions">
+            <summary>
+            Indicates whether or not this benchmark had any exceptions.
+            </summary>
+        </member>
+        <member name="M:TinyBenchmark.BenchmarkReport.#ctor(System.String,System.DateTime,System.TimeSpan,System.TimeSpan,System.TimeSpan,System.Boolean,System.Collections.Generic.IEnumerable{TinyBenchmark.IterationReport},System.AggregateException)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="name">The name of this benchmark.</param>
+            <param name="startedAtUtc">The UTC time of when this benchmark started.</param>
+            <param name="duration">The total duration of this benchmark.</param>
+            <param name="initDuration">The duration of the initialization for this benchmark.</param>
+            <param name="warmup">The duration of the warm-up for this benchmark.</param>
+            <param name="isBaseline">Indicates whether or not this benchmark was marked as a baseline for comparing the other benchmarks in the same container.</param>
+            <param name="iterationReports">The reports of the iterations of this benchmark.</param>
+            <param name="exception">The exceptions thrown during the execution of this benchmark.</param>
+        </member>
+        <member name="M:TinyBenchmark.BenchmarkReport.#ctor(System.String,System.DateTime,System.TimeSpan,System.TimeSpan,System.TimeSpan,System.Boolean,TinyBenchmark.BaselineStats,System.Collections.Generic.IEnumerable{TinyBenchmark.IterationReport},System.AggregateException)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="name">The name of this benchmark.</param>
+            <param name="startedAtUtc">The UTC time of when this benchmark started.</param>
+            <param name="duration">The total duration of this benchmark.</param>
+            <param name="initDuration">The duration of the initialization for this benchmark.</param>
+            <param name="warmup">The duration of the warm-up for this benchmark.</param>
+            <param name="isBaseline">Indicates whether or not this benchmark was marked as a baseline for comparing the other benchmarks in the same container.</param>
+            <param name="baselineStats">The comparison data against the baseline benchmark's results.</param>
+            <param name="iterationReports">The reports of the iterations of this benchmark.</param>
+            <param name="exception">The exceptions thrown during the execution of this benchmark.</param>
+        </member>
+        <member name="T:TinyBenchmark.BenchmarksContainerReport">
+            <summary>
+            The report of a benchmarks container.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarksContainerReport.Name">
+            <summary>
+            The name of the container.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarksContainerReport.BenchmarkContainerType">
+            <summary>
+            The type of the container.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarksContainerReport.StartedAtUtc">
+            <summary>
+            The UTC time of when the container benchmark started.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarksContainerReport.Duration">
+            <summary>
+            The total duration of the benchmark for this container.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarksContainerReport.Reports">
+            <summary>
+            The reports of the benchmarks included in this container.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarksContainerReport.Exception">
+            <summary>
+            The exceptions thrown during the execution of this container.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarksContainerReport.HasExceptions">
+            <summary>
+            Indicates whether or not this container had any exceptions during the benchmark.
+            </summary>
+        </member>
+        <member name="M:TinyBenchmark.BenchmarksContainerReport.#ctor(System.String,System.Type,System.DateTime,System.TimeSpan,System.Collections.Generic.IEnumerable{TinyBenchmark.BenchmarkReport},System.AggregateException)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="name">The name of the container.</param>
+            <param name="benchmarkContainerType">The type of the container.</param>
+            <param name="startedAtUtc">The UTC time of when the benchmark started.</param>
+            <param name="duration">The total duration of the benchmark for this container.</param>
+            <param name="reports">The reports of the benchmarks included in this container.</param>
+            <param name="exception">The exceptions thrown during the execution of this container.</param>
+        </member>
         <member name="T:TinyBenchmark.IReport">
             <summary>
             Defines a report that can be exported.
@@ -400,6 +531,75 @@
             Accepts an exporter.
             </summary>
             <param name="exporter">The exporter.</param>
+        </member>
+        <member name="T:TinyBenchmark.IterationReport">
+            <summary>
+            The report of a single iteration of a benchmark.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.IterationReport.IterationNumber">
+            <summary>
+            The number of the iteration.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.IterationReport.Parameters">
+            <summary>
+            The parameters that were applied to the container during this iteration.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.IterationReport.Arguments">
+            <summary>
+            The arguments that were used during this iteration.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.IterationReport.StartedAtUtc">
+            <summary>
+            The UTC time of when this iteration started.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.IterationReport.Duration">
+            <summary>
+            The duration of this iteration.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.IterationReport.BaselineStats">
+            <summary>
+            The comparison data against the baseline benchmark's results.
+            It's null when there was no baseline benchmark.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.IterationReport.Exception">
+            <summary>
+            The exceptions thrown during the execution of this benchmark.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.IterationReport.Failed">
+            <summary>
+            Whether or not this iteration failed.
+            </summary>
+        </member>
+        <member name="M:TinyBenchmark.IterationReport.#ctor(System.Int32,TinyBenchmark.Parameters,System.Collections.Generic.IEnumerable{TinyBenchmark.Argument},System.DateTime,System.TimeSpan,System.Exception)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="iterationNumber">The number of the iteration.</param>
+            <param name="parameters">The parameters that were applied to the container during this iteration.</param>
+            <param name="arguments">The arguments that were used during this iteration.</param>
+            <param name="startedAtUtc">The UTC time of when this iteration started.</param>
+            <param name="duration">The duration of this iteration.</param>
+            <param name="exception">The exceptions thrown during the execution of this benchmark.</param>
+        </member>
+        <member name="M:TinyBenchmark.IterationReport.#ctor(System.Int32,TinyBenchmark.Parameters,System.Collections.Generic.IEnumerable{TinyBenchmark.Argument},System.DateTime,System.TimeSpan,TinyBenchmark.BaselineStats,System.Exception)">
+            <summary>
+            
+            </summary>
+            <param name="iterationNumber">The number of the iteration.</param>
+            <param name="parameters">The parameters that were applied to the container during this iteration.</param>
+            <param name="arguments">The arguments that were used during this iteration.</param>
+            <param name="startedAtUtc">The UTC time of when this iteration started.</param>
+            <param name="duration">The duration of this iteration.</param>
+            <param name="baselineStats">The comparison data against the baseline benchmark's results.</param>
+            <param name="exception">The exceptions thrown during the execution of this benchmark.</param>
         </member>
     </members>
 </doc>

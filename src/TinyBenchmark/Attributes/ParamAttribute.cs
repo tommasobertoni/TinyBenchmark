@@ -16,7 +16,7 @@ namespace TinyBenchmark.Attributes
         /// <summary>
         /// Defines all the possible values of a property.
         /// </summary>
-        /// <param name="values">The property values that will be used by the benchmarks in the same class (container).</param>
+        /// <param name="values">The property values that will be used by the benchmarks in the same container.</param>
         public ParamAttribute(params object[] values)
             : this(values?.AsEnumerable())
         {

@@ -23,13 +23,13 @@ namespace TinyBenchmark.Attributes
         public int Iterations { get; set; } = 1;
 
         /// <summary>
-        /// Defines the order by which the benchmark should run against the other benchmarks contained in the same class (container).
+        /// Defines the order by which the benchmark should run against the other benchmarks contained in the same container.
         /// The lower the value, the earlier the benchmark will be invoked.
         /// </summary>
         public int Order { get; set; }
 
         /// <summary>
-        /// Defines if this benchmark will be used as a baseline for comparing the other benchmarks contained in the same class (container).
+        /// Defines if this benchmark will be used as a baseline for comparing the other benchmarks contained in the same container.
         /// Only one benchmark per container can be a baseline.
         /// </summary>
         public bool Baseline { get; set; }

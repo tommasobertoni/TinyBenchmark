@@ -29,11 +29,7 @@ namespace TinyBenchmark
 
         private readonly StringBuilder _sb = new StringBuilder();
 
-        /// <summary>
-        /// Visits a benchmarks container report to create an export.
-        /// </summary>
-        /// <param name="cr">The benchmarks container report.</param>
-        public virtual void Visit(BenchmarksContainerReport cr)
+        void IExporter.Visit(BenchmarksContainerReport cr)
         {
             AppendLine($"Container \"{cr.Name}\"");
 
@@ -89,11 +85,7 @@ namespace TinyBenchmark
             this.IndentLevel--;
         }
 
-        /// <summary>
-        /// Visits a benchmark report to create an export.
-        /// </summary>
-        /// <param name="r">The benchmark report.</param>
-        public virtual void Visit(BenchmarkReport r)
+        void IExporter.Visit(BenchmarkReport r)
         {
             AppendLine($"{r.Name}");
 
@@ -136,11 +128,7 @@ namespace TinyBenchmark
             this.IndentLevel--;
         }
 
-        /// <summary>
-        /// Visits a benchmark iteration report to create an export.
-        /// </summary>
-        /// <param name="ir">The benchmark iteration report.</param>
-        public virtual void Visit(IterationReport ir)
+        void IExporter.Visit(IterationReport ir)
         {
             if (!this.IncludeIterations) return;
 
