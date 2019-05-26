@@ -131,6 +131,144 @@
             </summary>
             <param name="methodName">The warm-up method's name.</param>
         </member>
+        <member name="T:TinyBenchmark.ExportExtensions">
+            <summary>
+            A set of extensions for reports and exporters.
+            </summary>
+        </member>
+        <member name="M:TinyBenchmark.ExportExtensions.ExportWith``1(TinyBenchmark.IReport)">
+            <summary>
+            Create an export of a report with the given exporter type.
+            </summary>
+            <typeparam name="TExporter">The type of the exporter to use.</typeparam>
+            <param name="report">The report.</param>
+            <returns>The exported instance used on the report.</returns>
+        </member>
+        <member name="M:TinyBenchmark.ExportExtensions.ExportWith``1(TinyBenchmark.IReport,``0)">
+            <summary>
+            Create an export of a report with the given exporter instance.
+            </summary>
+            <typeparam name="TExporter">The type of the exporter.</typeparam>
+            <param name="report">The report.</param>
+            <param name="exporter">The exporter instance to use.</param>
+        </member>
+        <member name="M:TinyBenchmark.ExportExtensions.ExportAsText(TinyBenchmark.IReport,System.Boolean)">
+            <summary>
+            Create an export of a report with a <see cref="T:TinyBenchmark.TextExporter"/>.
+            </summary>
+            <param name="report"></param>
+            <param name="includeIterations"></param>
+            <returns>The resulting text export.</returns>
+        </member>
+        <member name="T:TinyBenchmark.IExporter">
+            <summary>
+            Defines a report exporter.
+            </summary>
+        </member>
+        <member name="M:TinyBenchmark.IExporter.Visit(TinyBenchmark.BenchmarksContainerReport)">
+            <summary>
+            Visits a benchmarks container report to create an export.
+            </summary>
+            <param name="report">The benchmarks container report.</param>
+        </member>
+        <member name="M:TinyBenchmark.IExporter.Visit(TinyBenchmark.BenchmarkReport)">
+            <summary>
+            Visits a benchmark report to create an export.
+            </summary>
+            <param name="report">The benchmark report.</param>
+        </member>
+        <member name="M:TinyBenchmark.IExporter.Visit(TinyBenchmark.IterationReport)">
+            <summary>
+            Visits a benchmark iteration report to create an export.
+            </summary>
+            <param name="report">The benchmark iteration report.</param>
+        </member>
+        <member name="T:TinyBenchmark.TextExporter">
+            <summary>
+            Creates a text export of a report.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.TextExporter.IncludeIterations">
+            <summary>
+            When set to true, the data of the iterations is included in the export.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.TextExporter.IndentLevel">
+            <summary>
+            Defines an indentation level for the text.
+            </summary>
+        </member>
+        <member name="M:TinyBenchmark.TextExporter.Visit(TinyBenchmark.BenchmarksContainerReport)">
+            <summary>
+            Visits a benchmarks container report to create an export.
+            </summary>
+            <param name="cr">The benchmarks container report.</param>
+        </member>
+        <member name="M:TinyBenchmark.TextExporter.Visit(TinyBenchmark.BenchmarkReport)">
+            <summary>
+            Visits a benchmark report to create an export.
+            </summary>
+            <param name="r">The benchmark report.</param>
+        </member>
+        <member name="M:TinyBenchmark.TextExporter.Visit(TinyBenchmark.IterationReport)">
+            <summary>
+            Visits a benchmark iteration report to create an export.
+            </summary>
+            <param name="ir">The benchmark iteration report.</param>
+        </member>
+        <member name="M:TinyBenchmark.TextExporter.GetText">
+            <summary>
+            Creates the text export.
+            </summary>
+            <returns>The text export.</returns>
+        </member>
+        <member name="M:TinyBenchmark.TextExporter.AppendLine(System.String)">
+            <summary>
+            Appends a line to the export prefixed with the defined <see cref="P:TinyBenchmark.TextExporter.IndentLevel"/>.
+            </summary>
+            <param name="text">The text to append to the export.</param>
+        </member>
+        <member name="M:TinyBenchmark.TextExporter.Append(System.String)">
+            <summary>
+            Appends the text to the export prefixed with the defined <see cref="P:TinyBenchmark.TextExporter.IndentLevel"/>.
+            </summary>
+            <param name="text">The text to append to the export.</param>
+        </member>
+        <member name="M:TinyBenchmark.TextExporter.Format(System.DateTime)">
+            <summary>
+            Formats a DateTime.
+            </summary>
+            <param name="dateTime">The value to format as text.</param>
+            <returns>The text format of the value.</returns>
+        </member>
+        <member name="M:TinyBenchmark.TextExporter.FormatAsLocal(System.DateTime)">
+            <summary>
+            Formats a DateTime as a local time.
+            </summary>
+            <param name="dateTime">The value to format as text.</param>
+            <returns>The text format of the value.</returns>
+        </member>
+        <member name="M:TinyBenchmark.TextExporter.Format(System.TimeSpan)">
+            <summary>
+            Formats a TimeSpan.
+            </summary>
+            <param name="timeSpan">The value to format as text.</param>
+            <returns>The text format of the value.</returns>
+        </member>
+        <member name="M:TinyBenchmark.TextExporter.FormatRatio(System.Decimal)">
+            <summary>
+            Formats a value as a ratio.
+            </summary>
+            <param name="ratio">The value to format as text.</param>
+            <returns>The text format of the value.</returns>
+        </member>
+        <member name="M:TinyBenchmark.TextExporter.FormatEfficiency(System.Decimal)">
+            <summary>
+            Formats a value as an efficiency indicator.
+            </summary>
+            <param name="ratio">The value to format as text.</param>
+            <returns>The text format of the value.</returns>
+        </member>
         <member name="T:TinyBenchmark.IBenchmarkOutput">
             <summary>
             A benchmark-aware facade used to handle benchmark's logs.
@@ -144,7 +282,7 @@
         </member>
         <member name="T:TinyBenchmark.BenchmarkOutput">
             <summary>
-            The main IBenchmarkOutput implementation used internally by the library to output execution logs.
+            The main <see cref="T:TinyBenchmark.IBenchmarkOutput"/> implementation used internally by the library to output execution logs.
             It supports the definition of the indent level, in order to format a series of related logs.
             </summary>
         </member>
@@ -178,7 +316,7 @@
         </member>
         <member name="M:TinyBenchmark.BenchmarkOutput.ProgressFor(TinyBenchmark.OutputLevel,System.Int32,System.Int32)">
             <summary>
-            Creates a ProgressWriter with the log configuration of this BenchmarkOutput instance.
+            Creates a <see cref="T:TinyBenchmark.ProgressWriter"/> with the log configuration of this <see cref="T:TinyBenchmark.BenchmarkOutput"/> instance.
             </summary>
             <param name="outputLevel">The output level that the progress will write logs with.</param>
             <param name="totalItems">The total items that the execution tracked by this writer will process.</param>
@@ -229,6 +367,17 @@
             <summary>
             Rich logs with many details about the steps of the execution.
             </summary>
+        </member>
+        <member name="T:TinyBenchmark.IReport">
+            <summary>
+            Defines a report that can be exported.
+            </summary>
+        </member>
+        <member name="M:TinyBenchmark.IReport.Accept(TinyBenchmark.IExporter)">
+            <summary>
+            Accepts an exporter.
+            </summary>
+            <param name="exporter">The exporter.</param>
         </member>
     </members>
 </doc>

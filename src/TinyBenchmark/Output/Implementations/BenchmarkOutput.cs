@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TinyBenchmark
 {
     /// <summary>
-    /// The main IBenchmarkOutput implementation used internally by the library to output execution logs.
+    /// The main <see cref="IBenchmarkOutput"/> implementation used internally by the library to output execution logs.
     /// It supports the definition of the indent level, in order to format a series of related logs.
     /// </summary>
     internal class BenchmarkOutput : IBenchmarkOutput
@@ -88,7 +88,7 @@ namespace TinyBenchmark
         }
 
         /// <summary>
-        /// Creates a ProgressWriter with the log configuration of this BenchmarkOutput instance.
+        /// Creates a <see cref="ProgressWriter"/> with the log configuration of this <see cref="BenchmarkOutput"/> instance.
         /// </summary>
         /// <param name="outputLevel">The output level that the progress will write logs with.</param>
         /// <param name="totalItems">The total items that the execution tracked by this writer will process.</param>

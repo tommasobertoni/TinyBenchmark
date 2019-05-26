@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TinyBenchmark
 {
-    public class BenchmarkReport : IBenchmark
+    public class BenchmarkReport : IReport
     {
         public string Name { get; }
 
@@ -85,6 +85,6 @@ namespace TinyBenchmark
             }
         }
 
-        void IBenchmark.Accept(IExporter exporter) => exporter.Visit(this);
+        void IReport.Accept(IExporter exporter) => exporter.Visit(this);
     }
 }

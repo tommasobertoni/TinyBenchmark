@@ -6,11 +6,21 @@ using System.Threading.Tasks;
 
 namespace TinyBenchmark
 {
+    /// <summary>
+    /// Creates a text export of a report.
+    /// </summary>
     public class TextExporter : IExporter
     {
+        /// <summary>
+        /// When set to true, the data of the iterations is included in the export.
+        /// </summary>
         public bool IncludeIterations { get; set; } = true;
 
         private int _indentLevel;
+        
+        /// <summary>
+        /// Defines an indentation level for the text.
+        /// </summary>
         protected virtual int IndentLevel
         {
             get => _indentLevel;
@@ -19,6 +29,10 @@ namespace TinyBenchmark
 
         private readonly StringBuilder _sb = new StringBuilder();
 
+        /// <summary>
+        /// Visits a benchmarks container report to create an export.
+        /// </summary>
+        /// <param name="cr">The benchmarks container report.</param>
         public virtual void Visit(BenchmarksContainerReport cr)
         {
             AppendLine($"Container \"{cr.Name}\"");
@@ -63,7 +77,7 @@ namespace TinyBenchmark
 
                 foreach (var report in benchmarksWithParameters)
                 {
-                    (report as IBenchmark).Accept(this);
+                    (report as IReport).Accept(this);
                     AppendLine();
                 }
 
@@ -75,6 +89,10 @@ namespace TinyBenchmark
             this.IndentLevel--;
         }
 
+        /// <summary>
+        /// Visits a benchmark report to create an export.
+        /// </summary>
+        /// <param name="r">The benchmark report.</param>
         public virtual void Visit(BenchmarkReport r)
         {
             AppendLine($"{r.Name}");
@@ -110,7 +128,7 @@ namespace TinyBenchmark
                 this.IndentLevel++;
 
                 foreach (var ir in r.IterationReports)
-                    (ir as IBenchmark).Accept(this);
+                    (ir as IReport).Accept(this);
 
                 this.IndentLevel--;
             }
@@ -118,6 +136,10 @@ namespace TinyBenchmark
             this.IndentLevel--;
         }
 
+        /// <summary>
+        /// Visits a benchmark iteration report to create an export.
+        /// </summary>
+        /// <param name="ir">The benchmark iteration report.</param>
         public virtual void Visit(IterationReport ir)
         {
             if (!this.IncludeIterations) return;
@@ -145,10 +167,18 @@ namespace TinyBenchmark
             AppendLine();
         }
 
+        /// <summary>
+        /// Creates the text export.
+        /// </summary>
+        /// <returns>The text export.</returns>
         public virtual string GetText() => _sb.ToString().Trim();
 
         #region Helpers
 
+        /// <summary>
+        /// Appends a line to the export prefixed with the defined <see cref="IndentLevel"/>.
+        /// </summary>
+        /// <param name="text">The text to append to the export.</param>
         protected virtual void AppendLine(string text = null)
         {
             if (text == null)
@@ -162,21 +192,50 @@ namespace TinyBenchmark
             }
         }
 
+        /// <summary>
+        /// Appends the text to the export prefixed with the defined <see cref="IndentLevel"/>.
+        /// </summary>
+        /// <param name="text">The text to append to the export.</param>
         protected virtual void Append(string text)
         {
             var indent = new string(' ', this.IndentLevel * 2);
             _sb.Append($"{indent}{text}");
         }
 
+        /// <summary>
+        /// Formats a DateTime.
+        /// </summary>
+        /// <param name="dateTime">The value to format as text.</param>
+        /// <returns>The text format of the value.</returns>
         protected virtual string Format(DateTime dateTime) => dateTime.ToString();
 
+        /// <summary>
+        /// Formats a DateTime as a local time.
+        /// </summary>
+        /// <param name="dateTime">The value to format as text.</param>
+        /// <returns>The text format of the value.</returns>
         protected virtual string FormatAsLocal(DateTime dateTime) =>
             $"{Format(dateTime.ToLocalTime())} (local time)";
 
+        /// <summary>
+        /// Formats a TimeSpan.
+        /// </summary>
+        /// <param name="timeSpan">The value to format as text.</param>
+        /// <returns>The text format of the value.</returns>
         protected virtual string Format(TimeSpan timeSpan) => timeSpan.ToString();
 
+        /// <summary>
+        /// Formats a value as a ratio.
+        /// </summary>
+        /// <param name="ratio">The value to format as text.</param>
+        /// <returns>The text format of the value.</returns>
         protected virtual string FormatRatio(decimal ratio) => Math.Round(ratio, 8).ToString();
 
+        /// <summary>
+        /// Formats a value as an efficiency indicator.
+        /// </summary>
+        /// <param name="ratio">The value to format as text.</param>
+        /// <returns>The text format of the value.</returns>
         protected virtual string FormatEfficiency(decimal ratio) => Math.Round(ratio, 5).ToString();
 
         #endregion

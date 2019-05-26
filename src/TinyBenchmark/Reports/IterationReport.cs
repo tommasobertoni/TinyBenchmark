@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TinyBenchmark
 {
-    public class IterationReport : IBenchmark
+    public class IterationReport : IReport
     {
         public int IterationNumber { get; }
 
@@ -52,6 +52,6 @@ namespace TinyBenchmark
             this.Exception = exception;
         }
 
-        void IBenchmark.Accept(IExporter exporter) => exporter.Visit(this);
+        void IReport.Accept(IExporter exporter) => exporter.Visit(this);
     }
 }

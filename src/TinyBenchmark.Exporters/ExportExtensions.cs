@@ -7,7 +7,7 @@ namespace TinyBenchmark
 {
     public static class ExportExtensions
     {
-        public static string ExportAsJson(this IBenchmark container, bool formatted = true)
+        public static string ExportAsJson(this IReport container, bool formatted = true)
         {
             var exporter = new JsonExporter
             {
