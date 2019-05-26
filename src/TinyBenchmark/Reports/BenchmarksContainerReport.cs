@@ -26,7 +26,7 @@ namespace TinyBenchmark
         public DateTime StartedAtUtc { get; }
 
         /// <summary>
-        /// The total duration of the benchmark for this container.
+        /// The total duration of the benchmark of this container.
         /// </summary>
         public TimeSpan Duration { get; }
 
@@ -51,7 +51,7 @@ namespace TinyBenchmark
         /// <param name="name">The name of the container.</param>
         /// <param name="benchmarkContainerType">The type of the container.</param>
         /// <param name="startedAtUtc">The UTC time of when the benchmark started.</param>
-        /// <param name="duration">The total duration of the benchmark for this container.</param>
+        /// <param name="duration">The total duration of the benchmark of this container.</param>
         /// <param name="reports">The reports of the benchmarks included in this container.</param>
         /// <param name="exception">The exceptions thrown during the execution of this container.</param>
         protected internal BenchmarksContainerReport(

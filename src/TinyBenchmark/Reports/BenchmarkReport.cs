@@ -82,8 +82,8 @@ namespace TinyBenchmark
         /// <param name="name">The name of this benchmark.</param>
         /// <param name="startedAtUtc">The UTC time of when this benchmark started.</param>
         /// <param name="duration">The total duration of this benchmark.</param>
-        /// <param name="initDuration">The duration of the initialization for this benchmark.</param>
-        /// <param name="warmup">The duration of the warm-up for this benchmark.</param>
+        /// <param name="initDuration">The duration of the initialization.</param>
+        /// <param name="warmup">The duration of the warm-up.</param>
         /// <param name="isBaseline">Indicates whether or not this benchmark was marked as a baseline for comparing the other benchmarks in the same container.</param>
         /// <param name="iterationReports">The reports of the iterations of this benchmark.</param>
         /// <param name="exception">The exceptions thrown during the execution of this benchmark.</param>
@@ -106,8 +106,8 @@ namespace TinyBenchmark
         /// <param name="name">The name of this benchmark.</param>
         /// <param name="startedAtUtc">The UTC time of when this benchmark started.</param>
         /// <param name="duration">The total duration of this benchmark.</param>
-        /// <param name="initDuration">The duration of the initialization for this benchmark.</param>
-        /// <param name="warmup">The duration of the warm-up for this benchmark.</param>
+        /// <param name="initDuration">The duration of the initialization.</param>
+        /// <param name="warmup">The duration of the warm-up.</param>
         /// <param name="isBaseline">Indicates whether or not this benchmark was marked as a baseline for comparing the other benchmarks in the same container.</param>
         /// <param name="baselineStats">The comparison data against the baseline benchmark's results.</param>
         /// <param name="iterationReports">The reports of the iterations of this benchmark.</param>
