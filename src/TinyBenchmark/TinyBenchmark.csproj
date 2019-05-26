@@ -8,4 +8,12 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>C:\code\misc\TinyBenchmark\src\TinyBenchmark\TinyBenchmark.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\code\misc\TinyBenchmark\src\TinyBenchmark\TinyBenchmark.xml</DocumentationFile>
+  </PropertyGroup>
+
 </Project>

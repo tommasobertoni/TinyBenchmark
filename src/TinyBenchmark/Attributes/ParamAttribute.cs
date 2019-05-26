@@ -5,18 +5,20 @@ using System.Threading.Tasks;
 
 namespace TinyBenchmark.Attributes
 {
+    /// <summary>
+    /// Defines all the possible values of a property that will be used by all the benchmarks.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public class ParamAttribute : Attribute
     {
         internal IReadOnlyList<object> Values { get; }
 
-        public ParamAttribute(object value)
-            : this(new[] { value })
-        {
-        }
-
-        public ParamAttribute(object value, params object[] otherValues)
-            : this(new[] { value }.Concat(otherValues))
+        /// <summary>
+        /// Defines all the possible values of a property.
+        /// </summary>
+        /// <param name="values">The property values that will be used by the benchmarks in the same class (container).</param>
+        public ParamAttribute(params object[] values)
+            : this(values?.AsEnumerable())
         {
         }
 

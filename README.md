@@ -19,11 +19,11 @@ _**Usage**_
   
 _**Attributes**_
   - **[Benchmark]**: identifies a benchmark method
-  - **[Arguments]**: defines the benchmark method arguments
-  - **[WarmupWith]**: identifies a warmup method to be executed before a benchmark
+  - **[Arguments]**: defines the benchmark arguments
+  - **[WarmupWith]**: identifies a warmup method to be executed before the benchmark
   - **[Param]**: defines all the possible values of a property that will be used by all the benchmarks
   - **[Init]**: identifies an initialization method to be executed before _each_ benchmark
-  - **[InitWith]**: identifies an initialization method to be executed before a benchmark
+  - **[InitWith]**: identifies an initialization method to be executed before the benchmark
   - **[BenchmarksContainer]**: defines additional information about the class that contains the benchmarks
   - **[InitContainer]**: identifies an initialization method to be executed _once_ before every benchmark
   

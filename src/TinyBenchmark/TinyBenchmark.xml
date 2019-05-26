@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TinyBenchmark</name>
+    </assembly>
+    <members>
+        <member name="P:TinyBenchmark.Analysis.BenchmarksScanner.Container">
+            <summary>
+            The benchmarks container reference.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.Analysis.BenchmarksScanner.Init">
+            <summary>
+            The benchmarks init reference, if available.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.Analysis.BenchmarksScanner.Benchmarks">
+            <summary>
+            The benchmark references, if any.
+            </summary>
+        </member>
+        <member name="T:TinyBenchmark.Attributes.ArgumentsAttribute">
+            <summary>
+            Defines the benchmark arguments when the method accepts input values.
+            The type and the number of arguments must be coherent with what the method expects.
+            </summary>
+        </member>
+        <member name="M:TinyBenchmark.Attributes.ArgumentsAttribute.#ctor(System.Object[])">
+            <summary>
+            Defines the collection of arguments.
+            </summary>
+            <param name="arguments">The method's arguments.</param>
+        </member>
+        <member name="T:TinyBenchmark.Attributes.BenchmarkAttribute">
+            <summary>
+            Identifies a benchmark method.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.Attributes.BenchmarkAttribute.Name">
+            <summary>
+            The name of the benchmark that will be used in the reports: if not set, the name of the method will be used.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.Attributes.BenchmarkAttribute.Iterations">
+            <summary>
+            Defines how many iterations this benchmark will run, given the same parameters and arguments.
+            This must be a positive value, and has a default of 1. Increasing the iterations may increase the accuracy of the results.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.Attributes.BenchmarkAttribute.Order">
+            <summary>
+            Defines the order by which the benchmark should run against the other benchmarks contained in the same class (container).
+            The lower the value, the earlier the benchmark will be invoked.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.Attributes.BenchmarkAttribute.Baseline">
+            <summary>
+            Defines if this benchmark will be used as a baseline for comparing the other benchmarks contained in the same class (container).
+            Only one benchmark per container can be a baseline.
+            </summary>
+        </member>
+        <member name="T:TinyBenchmark.Attributes.BenchmarksContainerAttribute">
+            <summary>
+            Defines additional information about the class that contains the benchmarks.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.Attributes.BenchmarksContainerAttribute.Name">
+            <summary>
+            The name of the benchmarks container that will be used in the reports: if not set, the class name will be used.
+            </summary>
+        </member>
+        <member name="T:TinyBenchmark.Attributes.InitAttribute">
+            <summary>
+            Identifies an initialization method to be executed before each benchmark in the class (container).
+            </summary>
+        </member>
+        <member name="T:TinyBenchmark.Attributes.InitContainerAttribute">
+            <summary>
+            Identifies an initialization method to be executed once before every benchmark.
+            </summary>
+        </member>
+        <member name="T:TinyBenchmark.Attributes.InitWithAttribute">
+            <summary>
+            Identifies an initialization method to be executed before the benchmark.
+            This attribute is meant to be applied to a benchmark method.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.Attributes.InitWithAttribute.MethodName">
+            <summary>
+            An initialization method's name.
+            </summary>
+        </member>
+        <member name="M:TinyBenchmark.Attributes.InitWithAttribute.#ctor(System.String)">
+            <summary>
+            Identifies an initialization method.
+            </summary>
+            <param name="methodName">The initialization method's name.</param>
+        </member>
+        <member name="T:TinyBenchmark.Attributes.ParamAttribute">
+            <summary>
+            Defines all the possible values of a property that will be used by all the benchmarks.
+            </summary>
+        </member>
+        <member name="M:TinyBenchmark.Attributes.ParamAttribute.#ctor(System.Object[])">
+            <summary>
+            Defines all the possible values of a property.
+            </summary>
+            <param name="values">The property values that will be used by the benchmarks in the same class (container).</param>
+        </member>
+        <member name="T:TinyBenchmark.Attributes.WarmupWithAttribute">
+            <summary>
+            Identifies a warm-up method to be executed before the benchmark.
+            This attribute is meant to be applied to a benchmark method.
+            The time the warm-up method takes to executed won't be mixed with
+            the actual benchmark's time, and it will be stored in a dedicated variable.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.Attributes.WarmupWithAttribute.MethodName">
+            <summary>
+            The name of the warm-up method for this benchmark.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.Attributes.WarmupWithAttribute.Order">
+            <summary>
+            Defines the order by which the wamu-up method should run against the other warm-up methods for this benchmark.
+            </summary>
+        </member>
+        <member name="M:TinyBenchmark.Attributes.WarmupWithAttribute.#ctor(System.String)">
+            <summary>
+            Identifies a warm-up method to be executed before the benchmark.
+            </summary>
+            <param name="methodName">The warm-up method's name.</param>
+        </member>
+    </members>
+</doc>
