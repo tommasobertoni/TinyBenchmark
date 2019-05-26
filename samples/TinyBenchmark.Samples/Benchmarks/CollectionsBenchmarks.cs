@@ -72,7 +72,6 @@ namespace TinyBenchmark.Samples
         // HashSet
 
         private HashSet<int> _hashSet;
-        private readonly IBenchmarkOutput _output;
 
         public void HashSetWarmup() => _hashSet = new HashSet<int>();
 

@@ -302,7 +302,7 @@
             can be sent to the output.
             </summary>
             <param name="level">The log level to evaluate.</param>
-            <returns>True when a log with the given level can be sent to the output, false otherwise.</returns>
+            <returns>true if a log with the given level can be sent to the output; otherwise, false.</returns>
         </member>
         <member name="M:TinyBenchmark.BenchmarkOutput.TinyBenchmark#IBenchmarkOutput#WriteLine(System.String)">
             <summary>
@@ -600,6 +600,114 @@
             <param name="duration">The duration of this iteration.</param>
             <param name="baselineStats">The comparison data against the baseline benchmark's results.</param>
             <param name="exception">The exceptions thrown during the execution of this benchmark.</param>
+        </member>
+        <member name="T:TinyBenchmark.Argument">
+            <summary>
+            An argument used for a benchmark.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.Argument.VariableName">
+            <summary>
+            The method's variable name.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.Argument.Value">
+            <summary>
+            The value of this argument.
+            </summary>
+        </member>
+        <member name="T:TinyBenchmark.BaselineStats">
+            <summary>
+            The comparison data against the baseline benchmark's results.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BaselineStats.Ratio">
+            <summary>
+            duration / baseline duration
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BaselineStats.Efficiency">
+            <summary>
+            baseline duration / duration
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BaselineStats.AvgTimeDifference">
+            <summary>
+            baseline duration - duration
+            </summary>
+        </member>
+        <member name="M:TinyBenchmark.BaselineStats.#ctor(System.Decimal,System.Decimal,System.TimeSpan)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="ratio">duration / baseline duration</param>
+            <param name="efficiency">baseline duration / duration</param>
+            <param name="avgTimeDifference">baseline duration - duration</param>
+        </member>
+        <member name="T:TinyBenchmark.Parameters">
+            <summary>
+            Parameters used for a benchmark.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.Parameters.Values">
+            <summary>
+            The parameters and their values.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.Parameters.Hash">
+            <summary>
+            The hash code of this parameters collection.
+            </summary>
+        </member>
+        <member name="M:TinyBenchmark.Parameters.ToString">
+            <summary>
+            Returns a string that represents this parameters collection.
+            </summary>
+            <returns>A string that represents this parameters collection.</returns>
+        </member>
+        <member name="M:TinyBenchmark.Parameters.GetHashCode">
+            <summary>
+            Calculates the hash code for this parameters collection.
+            </summary>
+            <returns>A hash code for this parameters collection.</returns>
+        </member>
+        <member name="M:TinyBenchmark.Parameters.Equals(System.Object)">
+            <summary>
+            Determines whether the specified object is equal to this parameters collection.
+            </summary>
+            <param name="obj">The object to compare with this parameters collection.</param>
+            <returns>true if the specified object is equal to this parameters collection; otherwise, false.</returns>
+        </member>
+        <member name="M:TinyBenchmark.Parameters.op_Equality(TinyBenchmark.Parameters,TinyBenchmark.Parameters)">
+            <summary>
+            Determines whether the first parameters collection is equal to the second one.
+            </summary>
+            <param name="prms1">The first parameters collection.</param>
+            <param name="prms2">The second parameters collection.</param>
+            <returns>true when the two parameters collections are equal; otherwise, false.</returns>
+        </member>
+        <member name="M:TinyBenchmark.Parameters.op_Inequality(TinyBenchmark.Parameters,TinyBenchmark.Parameters)">
+            <summary>
+            Determines whether the first parameters collection is not equal to the second one.
+            </summary>
+            <param name="prms1">The first parameters collection.</param>
+            <param name="prms2">The second parameters collection.</param>
+            <returns>true when the two parameters collections are different; otherwise, false.</returns>
+        </member>
+        <member name="T:TinyBenchmark.ParameterValue">
+            <summary>
+            A property value used for a benchmark.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.ParameterValue.PropertyName">
+            <summary>
+            The container's property name.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.ParameterValue.Value">
+            <summary>
+            The value of this parameter.
+            </summary>
         </member>
     </members>
 </doc>

@@ -47,7 +47,7 @@ namespace TinyBenchmark
         /// can be sent to the output.
         /// </summary>
         /// <param name="level">The log level to evaluate.</param>
-        /// <returns>True when a log with the given level can be sent to the output, false otherwise.</returns>
+        /// <returns>true if a log with the given level can be sent to the output; otherwise, false.</returns>
         public bool IsShown(OutputLevel level) => level <= _maxOutputLevel;
 
         /// <summary>
