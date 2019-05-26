@@ -8,6 +8,9 @@ using TinyBenchmark.Attributes;
 
 namespace TinyBenchmark.Analysis
 {
+    /// <summary>
+    /// Scans a type and extracts benchmarks information.
+    /// </summary>
     internal class BenchmarksScanner
     {
         private static readonly BindingFlags _Flags = BindingFlags.Public | BindingFlags.Instance;
@@ -97,13 +100,16 @@ namespace TinyBenchmark.Analysis
                     throw new InvalidOperationException($"Property {property.DeclaringType.Name}.{property.Name} must be writable for the {nameof(ParamAttribute)} to work.");
 
                 // Verify parameters type.
-                // TODO: support null parameters.
                 foreach (var paramValue in attribute.Values)
+                {
+                    if (paramValue == null && property.PropertyType.IsValueType)
+                        throw new InvalidOperationException($"Cannot assign null to the property {property.DeclaringType.Name}.{property.Name} of type {property.PropertyType.Name}.");
+
                     if (!property.PropertyType.IsAssignableFrom(paramValue.GetType()))
                         throw new InvalidOperationException($"Cannot associate a value of type {paramValue.GetType().Name} to the property {property.DeclaringType.Name}.{property.Name} of type {property.PropertyType.Name}.");
+                }
 
                 var propertyParametersCollection = new PropertyWithParametersCollection(property, attribute);
-                var parametersEnumerator = propertyParametersCollection.GetEnumerator();
                 parametersSetCollection.Add(propertyParametersCollection);
             }
 
@@ -248,13 +254,15 @@ namespace TinyBenchmark.Analysis
 
                     var argumentsReference = new ArgumentsReference();
 
+                    // Verify argument type.
                     for (int i = 0; i < expectedMethodArguments.Count; i++)
                     {
-                        var methodArgument = expectedMethodArguments[i];
                         var arg = args[i];
+                        var methodArgument = expectedMethodArguments[i];
 
-                        // Verify argument type.
-                        // TODO: support null arguments.
+                        if (arg == null)
+                            throw ArgumentNullCannotBeAssignedToValueType(args, methodArgument);
+
                         if (!methodArgument.ParameterType.IsAssignableFrom(arg.GetType()))
                             throw ArgumentTypesDoNotMatch(args, expected: methodArgument.GetType(), actual: arg.GetType());
 
@@ -277,6 +285,9 @@ namespace TinyBenchmark.Analysis
 
             InvalidOperationException ArgumentsCountDoNotMatch(IEnumerable<object> args, int expected, int actual) => new InvalidOperationException(
                 $"{GetExceptionPrefix(args)}: expected {expected} arguments but {actual} arguments were provided.");
+
+            InvalidOperationException ArgumentNullCannotBeAssignedToValueType(IEnumerable<object> args, ParameterInfo argumentInfo) => new InvalidOperationException(
+                $"{GetExceptionPrefix(args)}: cannot assign null to the argument {argumentInfo.Name} of type {argumentInfo.ParameterType.Name}.");
 
             InvalidOperationException ArgumentTypesDoNotMatch(IEnumerable<object> args, Type expected, Type actual) => new InvalidOperationException(
                 $"{GetExceptionPrefix(args)}: expected {expected.Name} but {actual.Name} was provided.");

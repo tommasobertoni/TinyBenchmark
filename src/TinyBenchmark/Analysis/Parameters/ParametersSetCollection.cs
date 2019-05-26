@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using TinyBenchmark.Attributes;
 
 namespace TinyBenchmark.Analysis
 {
+    /// <summary>
+    /// Identifies a collection of parameters set.
+    /// When iterated, returns all the permutations of the properties with their values.
+    /// </summary>
     internal class ParametersSetCollection : IEnumerable<ParametersSet>
     {
         public int ParametrizedPropertiesCount => _propertiesWithParameters.Count;
@@ -65,7 +68,7 @@ namespace TinyBenchmark.Analysis
                     var parametersSet = new ParametersSet();
 
                     foreach (var (collection, enumerator) in _propertiesParametersEnumerations)
-                        parametersSet.Add(collection.Property, enumerator.Current);
+                        parametersSet[collection.Property] = enumerator.Current;
 
                     return parametersSet;
                 }

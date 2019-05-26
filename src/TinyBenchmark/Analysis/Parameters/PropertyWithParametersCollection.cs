@@ -8,6 +8,10 @@ using TinyBenchmark.Attributes;
 
 namespace TinyBenchmark.Analysis
 {
+    /// <summary>
+    /// Identifies a property decorated with with a <see cref="ParamAttribute"/>.
+    /// It can return an enumerator of the param values defined in the attribute.
+    /// </summary>
     internal class PropertyWithParametersCollection : IEnumerable<object>
     {
         public PropertyInfo Property { get; }

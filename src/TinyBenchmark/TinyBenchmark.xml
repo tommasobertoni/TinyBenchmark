@@ -4,6 +4,11 @@
         <name>TinyBenchmark</name>
     </assembly>
     <members>
+        <member name="T:TinyBenchmark.Analysis.BenchmarksScanner">
+            <summary>
+            Scans a type and extracts benchmarks information.
+            </summary>
+        </member>
         <member name="P:TinyBenchmark.Analysis.BenchmarksScanner.Container">
             <summary>
             The benchmarks container reference.
@@ -17,6 +22,23 @@
         <member name="P:TinyBenchmark.Analysis.BenchmarksScanner.Benchmarks">
             <summary>
             The benchmark references, if any.
+            </summary>
+        </member>
+        <member name="T:TinyBenchmark.Analysis.ParametersSet">
+            <summary>
+            Identifies a set of property-value pair to be applied to a benchmarks container.
+            </summary>
+        </member>
+        <member name="T:TinyBenchmark.Analysis.ParametersSetCollection">
+            <summary>
+            Identifies a collection of parameters set.
+            When iterated, returns all the permutations of the properties with their values.
+            </summary>
+        </member>
+        <member name="T:TinyBenchmark.Analysis.PropertyWithParametersCollection">
+            <summary>
+            Identifies a property decorated with with a <see cref="T:TinyBenchmark.Attributes.ParamAttribute"/>.
+            It can return an enumerator of the param values defined in the attribute.
             </summary>
         </member>
         <member name="T:TinyBenchmark.Attributes.ArgumentsAttribute">

@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace TinyBenchmark.Analysis
 {
+    /// <summary>
+    /// Identifies a set of property-value pair to be applied to a benchmarks container.
+    /// </summary>
     internal class ParametersSet : IEnumerable<KeyValuePair<string, object>>, IEquatable<ParametersSet>
     {
         public object this[PropertyInfo property]
