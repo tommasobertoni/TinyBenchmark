@@ -15,14 +15,12 @@ namespace TinyBenchmark.Run
         public IReadOnlyList<BenchmarkPlan> BenchmarkPlans => _benchmarkPlans.AsReadOnly();
 
         private readonly BenchmarkOutput _output;
-        private readonly PreDefinedBenchmarkOutput _preDefinedBenchmarkOutput;
 
         private readonly List<BenchmarkPlan> _benchmarkPlans = new List<BenchmarkPlan>();
 
         public ContainerExecutionPlan(BenchmarkOutput output, ContainerReference container)
         {
             _output = output;
-            _preDefinedBenchmarkOutput = new PreDefinedBenchmarkOutput(OutputLevel.Verbose, _output);
 
             this.Container = container;
         }
@@ -216,7 +214,7 @@ namespace TinyBenchmark.Run
 
             var container = constructorWithParameters == null
                 ? Activator.CreateInstance(benchmarksContainerType)
-                : constructorWithParameters.Invoke(new[] { _preDefinedBenchmarkOutput });
+                : constructorWithParameters.Invoke(new[] { _output });
 
             return container;
         }

@@ -131,5 +131,104 @@
             </summary>
             <param name="methodName">The warm-up method's name.</param>
         </member>
+        <member name="T:TinyBenchmark.IBenchmarkOutput">
+            <summary>
+            A benchmark-aware facade used to handle benchmark's logs.
+            </summary>
+        </member>
+        <member name="M:TinyBenchmark.IBenchmarkOutput.WriteLine(System.String)">
+            <summary>
+            Writes a new line with the log message, if the configuration enables it.
+            </summary>
+            <param name="message">The log message.</param>
+        </member>
+        <member name="T:TinyBenchmark.BenchmarkOutput">
+            <summary>
+            The main IBenchmarkOutput implementation used internally by the library to output execution logs.
+            It supports the definition of the indent level, in order to format a series of related logs.
+            </summary>
+        </member>
+        <member name="M:TinyBenchmark.BenchmarkOutput.#ctor(TinyBenchmark.OutputLevel)">
+            <summary>
+            Creates a new instance given the max output level defined by the configuration.
+            </summary>
+            <param name="maxOutputLevel">The max output level.</param>
+        </member>
+        <member name="M:TinyBenchmark.BenchmarkOutput.IsShown(TinyBenchmark.OutputLevel)">
+            <summary>
+            Checks the level against the max output level defined by the configuration: returns true when a log with the given level
+            can be sent to the output.
+            </summary>
+            <param name="level">The log level to evaluate.</param>
+            <returns>True when a log with the given level can be sent to the output, false otherwise.</returns>
+        </member>
+        <member name="M:TinyBenchmark.BenchmarkOutput.TinyBenchmark#IBenchmarkOutput#WriteLine(System.String)">
+            <summary>
+            Writes a new line with the log message with a Verbose level.
+            This method is invoked by the benchmarks.
+            </summary>
+            <param name="message">The log message.</param>
+        </member>
+        <member name="M:TinyBenchmark.BenchmarkOutput.WriteLine(TinyBenchmark.OutputLevel,System.String)">
+            <summary>
+            Writes a new line with the log message with the given log, if the configuration allows it.
+            </summary>
+            <param name="outputLevel"></param>
+            <param name="message">The log message.</param>
+        </member>
+        <member name="M:TinyBenchmark.BenchmarkOutput.ProgressFor(TinyBenchmark.OutputLevel,System.Int32,System.Int32)">
+            <summary>
+            Creates a ProgressWriter with the log configuration of this BenchmarkOutput instance.
+            </summary>
+            <param name="outputLevel">The output level that the progress will write logs with.</param>
+            <param name="totalItems">The total items that the execution tracked by this writer will process.</param>
+            <param name="progressLength">The length of the text progress bar, in characters.</param>
+            <returns></returns>
+        </member>
+        <member name="T:TinyBenchmark.ProgressWriter">
+            <summary>
+            Writes a text progress bar.
+            </summary>
+        </member>
+        <member name="M:TinyBenchmark.ProgressWriter.#ctor(System.Int32,System.Action{System.String},System.Char,System.Char,System.Int32)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="totalItems">The total items that the execution tracked by this writer will process.</param>
+            <param name="writer">A delegate that handles the progress message.</param>
+            <param name="progressChar">The character used to identify the progress.</param>
+            <param name="emptyChar">The character used to identify the remaining work.</param>
+            <param name="progressLength">The length of the text progress bar, in characters.</param>
+        </member>
+        <member name="T:TinyBenchmark.OutputLevel">
+            <summary>
+            Defines which kind of logs should be displayed during execution.
+            </summary>
+        </member>
+        <member name="F:TinyBenchmark.OutputLevel.Silent">
+            <summary>
+            No logs.
+            </summary>
+        </member>
+        <member name="F:TinyBenchmark.OutputLevel.ErrorsOnly">
+            <summary>
+            Only logs indicating errors.
+            </summary>
+        </member>
+        <member name="F:TinyBenchmark.OutputLevel.Minimal">
+            <summary>
+            Logs with minimal information about the execution.
+            </summary>
+        </member>
+        <member name="F:TinyBenchmark.OutputLevel.Normal">
+            <summary>
+            Informative logs with information about the steps of the execution.
+            </summary>
+        </member>
+        <member name="F:TinyBenchmark.OutputLevel.Verbose">
+            <summary>
+            Rich logs with many details about the steps of the execution.
+            </summary>
+        </member>
     </members>
 </doc>

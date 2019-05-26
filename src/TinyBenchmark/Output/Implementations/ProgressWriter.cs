@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace TinyBenchmark
 {
+    /// <summary>
+    /// Writes a text progress bar.
+    /// </summary>
     internal class ProgressWriter
     {
         public const char FillChar = '█';
@@ -21,6 +24,14 @@ namespace TinyBenchmark
         private readonly char _emptyChar;
         private readonly int _progressLength;
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="totalItems">The total items that the execution tracked by this writer will process.</param>
+        /// <param name="writer">A delegate that handles the progress message.</param>
+        /// <param name="progressChar">The character used to identify the progress.</param>
+        /// <param name="emptyChar">The character used to identify the remaining work.</param>
+        /// <param name="progressLength">The length of the text progress bar, in characters.</param>
         public ProgressWriter(
             int totalItems,
             Action<string> writer,
