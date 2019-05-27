@@ -36,8 +36,8 @@ namespace TinyBenchmark
         /// <summary>
         /// Create an export of a report with a <see cref="TextExporter"/>.
         /// </summary>
-        /// <param name="report"></param>
-        /// <param name="includeIterations"></param>
+        /// <param name="report">The report.</param>
+        /// <param name="includeIterations">true if the data from the iterations should be included in the export; the default is true.</param>
         /// <returns>The resulting text export.</returns>
         public static string ExportAsText(this IReport report, bool includeIterations = true)
         {
