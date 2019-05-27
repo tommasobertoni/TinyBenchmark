@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TinyBenchmark.Exporters</name>
+    </assembly>
+    <members>
+        <member name="T:TinyBenchmark.ExcludePropertiesResolver">
+            <summary>
+            Holds a collection of <see cref="T:TinyBenchmark.IPropertiesDefinition"/> in order to customize the properties that gets serialized into the json.
+            </summary>
+        </member>
+        <member name="T:TinyBenchmark.ParametersPropertiesDefinition">
+            <summary>
+            Excludes unwanted properties from the json for the Parameters type.
+            </summary>
+        </member>
+        <member name="T:TinyBenchmark.JsonExporter">
+            <summary>
+            Creates a text export of a report.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.JsonExporter.Formatted">
+            <summary>
+            Indicates if the resulting json should be formatted; the default is true.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.JsonExporter.IgnoreNullValues">
+            <summary>
+            Indicates if the properties with a null value should be excluded from the json; the default is true.
+            </summary>
+        </member>
+        <member name="M:TinyBenchmark.JsonExporter.GetJson">
+            <summary>
+            Creates the json export.
+            </summary>
+            <returns>The json export.</returns>
+        </member>
+        <member name="M:TinyBenchmark.JsonExporter.ToJson(System.Object)">
+            <summary>
+            Serializes the object to json.
+            </summary>
+            <param name="report">The report to serialize.</param>
+            <returns>The json export.</returns>
+        </member>
+        <member name="T:TinyBenchmark.ExportExtensions">
+            <summary>
+            A set of extensions for reports and exporters.
+            </summary>
+        </member>
+        <member name="M:TinyBenchmark.ExportExtensions.ExportAsJson(TinyBenchmark.IReport,System.Boolean,System.Boolean)">
+            <summary>
+            Create an export of a report with a <see cref="T:TinyBenchmark.JsonExporter"/>.
+            </summary>
+            <param name="report">The report.</param>
+            <param name="formatted">true if the resulting json should be formatted; the default is true.</param>
+            <param name="ignoreNullValues">true if the properties with a null value should be excluded from the json; the default is true.</param>
+            <returns>The resulting json export.</returns>
+        </member>
+    </members>
+</doc>

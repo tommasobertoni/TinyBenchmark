@@ -14,6 +14,9 @@ namespace TinyBenchmark
         IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization);
     }
 
+    /// <summary>
+    /// Holds a collection of <see cref="IPropertiesDefinition"/> in order to customize the properties that gets serialized into the json.
+    /// </summary>
     internal class ExcludePropertiesResolver : DefaultContractResolver
     {
         private readonly Dictionary<Type, IPropertiesDefinition> _propertiesDefinitions = new Dictionary<Type, IPropertiesDefinition>();
@@ -28,6 +31,9 @@ namespace TinyBenchmark
         }
     }
 
+    /// <summary>
+    /// Excludes unwanted properties from the json for the Parameters type.
+    /// </summary>
     internal class ParametersPropertiesDefinition : DefaultContractResolver, IPropertiesDefinition
     {
         public Type TargetType => typeof(Parameters);
