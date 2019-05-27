@@ -6,6 +6,9 @@ using TinyBenchmark.Analysis;
 
 namespace TinyBenchmark.Run
 {
+    /// <summary>
+    /// Creates execution plans for the container and the benchmark methods.
+    /// </summary>
     internal class BenchmarksPlanner
     {
         private readonly BenchmarkOutput _output;

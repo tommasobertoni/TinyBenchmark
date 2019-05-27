@@ -8,6 +8,9 @@ using TinyBenchmark.Analysis;
 
 namespace TinyBenchmark.Run
 {
+    /// <summary>
+    /// Identifies an execution plan for a benchmarks container.
+    /// </summary>
     internal class ContainerExecutionPlan
     {
         public ContainerReference Container { get; }

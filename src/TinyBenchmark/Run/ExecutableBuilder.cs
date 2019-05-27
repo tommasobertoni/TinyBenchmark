@@ -8,6 +8,9 @@ using TinyBenchmark.Analysis;
 
 namespace TinyBenchmark.Run
 {
+    /// <summary>
+    /// Creates a delegate ready to invoke a method and its parameters.
+    /// </summary>
     internal class ExecutableBuilder
     {
         public Action Create(object instance, MethodInfo method, object[] methodParameters)

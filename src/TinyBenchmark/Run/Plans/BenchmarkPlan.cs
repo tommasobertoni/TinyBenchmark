@@ -8,6 +8,9 @@ using TinyBenchmark.Analysis;
 
 namespace TinyBenchmark.Run
 {
+    /// <summary>
+    /// Identifies an execution plan for a benchmark method.
+    /// </summary>
     internal class BenchmarkPlan
     {
         public InitReference Init { get; }
@@ -50,7 +53,7 @@ namespace TinyBenchmark.Run
             this.IsBaseline = isBaseline;
         }
 
-        internal BenchmarkReport Run<TBenchmarksContainer>(
+        public BenchmarkReport Run<TBenchmarksContainer>(
             TBenchmarksContainer benchmarksContainer,
             ProgressWriter progress)
         {

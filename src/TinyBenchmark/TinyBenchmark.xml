@@ -709,5 +709,55 @@
             The value of this parameter.
             </summary>
         </member>
+        <member name="T:TinyBenchmark.BenchmarkRunner">
+            <summary>
+            Executes benchmarks and reports.
+            </summary>
+        </member>
+        <member name="P:TinyBenchmark.BenchmarkRunner.MaxOutputLevel">
+            <summary>
+            The max output level for this runner.
+            </summary>
+        </member>
+        <member name="M:TinyBenchmark.BenchmarkRunner.#ctor(System.Nullable{TinyBenchmark.OutputLevel})">
+            <summary>
+            Creates a new instance, with an optional max output level.
+            </summary>
+            <param name="maxOutputLevel">The max output level for this runner; default is Normal.</param>
+        </member>
+        <member name="M:TinyBenchmark.BenchmarkRunner.Run``1">
+            <summary>
+            Runs a benchmarks container.
+            </summary>
+            <typeparam name="TBenchmarksContainer">The benchmarks container type.</typeparam>
+            <returns>The benchmarks container report.</returns>
+        </member>
+        <member name="M:TinyBenchmark.BenchmarkRunner.Run(System.Type)">
+            <summary>
+            Runs a benchmarks container container.
+            </summary>
+            <param name="benchmarksContainerType">The benchmarks container type.</param>
+            <returns>The benchmarks container report.</returns>
+        </member>
+        <member name="T:TinyBenchmark.Run.BenchmarksPlanner">
+            <summary>
+            Creates execution plans for the container and the benchmark methods.
+            </summary>
+        </member>
+        <member name="T:TinyBenchmark.Run.ExecutableBuilder">
+            <summary>
+            Creates a delegate ready to invoke a method and its parameters.
+            </summary>
+        </member>
+        <member name="T:TinyBenchmark.Run.BenchmarkPlan">
+            <summary>
+            Identifies an execution plan for a benchmark method.
+            </summary>
+        </member>
+        <member name="T:TinyBenchmark.Run.ContainerExecutionPlan">
+            <summary>
+            Identifies an execution plan for a benchmarks container.
+            </summary>
+        </member>
     </members>
 </doc>
