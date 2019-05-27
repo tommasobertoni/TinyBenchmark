@@ -15,6 +15,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nuget", "nuget", "{E20AB6B8-9D07-4CB5-A655-E35B7130B4F0}"
 	ProjectSection(SolutionItems) = preProject
 		nuget\Pack.bat = nuget\Pack.bat
+		nuget\Pack.Exporters.bat = nuget\Pack.Exporters.bat
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BB0B9702-84C6-4E5E-93CC-F265AD0C7FB3}"

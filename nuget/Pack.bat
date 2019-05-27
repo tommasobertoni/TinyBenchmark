@@ -1,0 +1,2 @@
+dotnet build ..\src\TinyBenchmark\TinyBenchmark.csproj --no-incremental
+nuget pack ..\src\TinyBenchmark\TinyBenchmark.csproj -Basepath ..\src\TinyBenchmark -Symbols -SymbolPackageFormat snupkg -Properties Configuration=Debug
