@@ -16,13 +16,16 @@ namespace TinyBenchmark.Analysis
 
         public void Add(string variableName, object value)
         {
+            if (string.IsNullOrWhiteSpace(variableName))
+                throw new ArgumentNullException(nameof(variableName));
+
             if (_arguments.ContainsKey(variableName))
                 throw new InvalidOperationException($"A value for the variable {variableName} already exists in this reference.");
 
             _arguments[variableName] = value;
         }
 
-        public object[] AsMethodParameters() => _arguments?.Values?.ToArray();
+        public object[] AsMethodParameters() => _arguments.Values?.ToArray() ?? Array.Empty<object>();
 
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => _arguments.GetEnumerator();
 

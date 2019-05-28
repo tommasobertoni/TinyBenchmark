@@ -9,6 +9,12 @@
             Scans a type and extracts benchmarks information.
             </summary>
         </member>
+        <member name="P:TinyBenchmark.Analysis.BenchmarksScanner.UseConventions">
+            <summary>
+            true when the scanner is allowed to create references using conventions, even when
+            there are no attributes; otherwise, false.
+            </summary>
+        </member>
         <member name="P:TinyBenchmark.Analysis.BenchmarksScanner.Container">
             <summary>
             The benchmarks container reference.
