@@ -142,10 +142,11 @@ namespace TinyBenchmark.Analysis
 
         private MethodInfo TryGetInitContainerMethod(Type benchmarksContainerType)
         {
+            var containerName = benchmarksContainerType.Name;
             var initsContainer = GetMethodsWithAttribute<InitContainerAttribute>(benchmarksContainerType);
 
             if (initsContainer.Count > 1)
-                throw new InvalidOperationException($"Multiple {nameof(InitContainerAttribute)}s are not allowed in the same container.");
+                throw new InvalidOperationException($"Multiple {nameof(InitContainerAttribute)}s are not allowed in the same container. Container: {containerName}");
 
             var initContainerMethodInfo = initsContainer.FirstOrDefault().method;
 
@@ -154,25 +155,28 @@ namespace TinyBenchmark.Analysis
                 /*
                  * Conventions:
                  * - InitContainer
-                 * - Init{ClassTypeName}
+                 * - Init{class name}
                  */
 
-                var genericConventionName = "InitContainer";
-                var typedConventionName = $"Init{benchmarksContainerType.Name}";
+                var defaultConventionName = "InitContainer";
+                var namedConventionName = $"Init{benchmarksContainerType.Name}";
 
                 var containerMethods = GetMethods(benchmarksContainerType);
 
                 var conventionBasedInitContainerMethods = containerMethods
                     .Where(m =>
-                        m.Name.Equals(genericConventionName, StringComparison.InvariantCultureIgnoreCase) ||
-                        m.Name.Equals(typedConventionName, StringComparison.InvariantCultureIgnoreCase))
+                        m.Name.Equals(defaultConventionName, StringComparison.InvariantCultureIgnoreCase) ||
+                        m.Name.Equals(namedConventionName, StringComparison.InvariantCultureIgnoreCase))
                     .ToList();
 
                 if (conventionBasedInitContainerMethods.Count > 1)
-                    throw new InvalidOperationException($"Multiple container initialization methods found using conventions.");
+                    throw new InvalidOperationException($"Multiple container initialization methods found using conventions. Container: {containerName}");
 
                 initContainerMethodInfo = conventionBasedInitContainerMethods.FirstOrDefault();
             }
+
+            if (initContainerMethodInfo?.GetParameters()?.Any() == true)
+                throw new InvalidOperationException($"A container initialization method cannot have parameters. Container: {containerName}");
 
             return initContainerMethodInfo; // Can be null
         }

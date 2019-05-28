@@ -28,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{59D5AA01
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyBenchmark.Tests", "tests\TinyBenchmark.Tests\TinyBenchmark.Tests.csproj", "{7D413235-A57A-49F3-9E85-BAE9048B8DA3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyBenchmark.Analysis.Tests", "tests\TinyBenchmark.Analysis.Tests\TinyBenchmark.Analysis.Tests.csproj", "{CEAD0D8F-E9AC-4A47-87C8-17F5AA7BFCF3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{7D413235-A57A-49F3-9E85-BAE9048B8DA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D413235-A57A-49F3-9E85-BAE9048B8DA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D413235-A57A-49F3-9E85-BAE9048B8DA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEAD0D8F-E9AC-4A47-87C8-17F5AA7BFCF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEAD0D8F-E9AC-4A47-87C8-17F5AA7BFCF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEAD0D8F-E9AC-4A47-87C8-17F5AA7BFCF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEAD0D8F-E9AC-4A47-87C8-17F5AA7BFCF3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +66,7 @@ Global
 		{E0F22E20-2695-42BA-8EC6-0A81703079DC} = {BB0B9702-84C6-4E5E-93CC-F265AD0C7FB3}
 		{0CAD698C-311A-4036-A177-64270A3B8819} = {BB0B9702-84C6-4E5E-93CC-F265AD0C7FB3}
 		{7D413235-A57A-49F3-9E85-BAE9048B8DA3} = {59D5AA01-CDE1-488B-8C81-028FD4AE8E3C}
+		{CEAD0D8F-E9AC-4A47-87C8-17F5AA7BFCF3} = {59D5AA01-CDE1-488B-8C81-028FD4AE8E3C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C225D10C-5169-4701-923B-30B5B4AD3822}
