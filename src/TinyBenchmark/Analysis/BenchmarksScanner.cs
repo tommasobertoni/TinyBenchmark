@@ -22,6 +22,12 @@ namespace TinyBenchmark.Analysis
             new ConcurrentDictionary<Type, PropertyInfo[]>();
 
         /// <summary>
+        /// true when the scanner is allowed to create references using conventions, even when
+        /// there are no attributes; otherwise, false.
+        /// </summary>
+        public bool UseConventions { get; }
+
+        /// <summary>
         /// The benchmarks container reference.
         /// </summary>
         public ContainerReference Container { get; private set; }
@@ -38,9 +44,10 @@ namespace TinyBenchmark.Analysis
 
         private readonly BenchmarkOutput _output;
 
-        public BenchmarksScanner(BenchmarkOutput output)
+        public BenchmarksScanner(BenchmarkOutput output, bool useConventions = true)
         {
             _output = output;
+            UseConventions = useConventions;
         }
 
         public void Scan<TBenchmarksContainer>() => this.Scan(typeof(TBenchmarksContainer));
@@ -138,9 +145,36 @@ namespace TinyBenchmark.Analysis
             var initsContainer = GetMethodsWithAttribute<InitContainerAttribute>(benchmarksContainerType);
 
             if (initsContainer.Count > 1)
-                throw new InvalidOperationException($"Multiple {nameof(InitContainerAttribute)} not allowed in the same container.");
+                throw new InvalidOperationException($"Multiple {nameof(InitContainerAttribute)}s are not allowed in the same container.");
 
-            return initsContainer.FirstOrDefault().method; // Can be null.
+            var initContainerMethodInfo = initsContainer.FirstOrDefault().method;
+
+            if (initContainerMethodInfo == null && this.UseConventions)
+            {
+                /*
+                 * Conventions:
+                 * - InitContainer
+                 * - Init{ClassTypeName}
+                 */
+
+                var genericConventionName = "InitContainer";
+                var typedConventionName = $"Init{benchmarksContainerType.Name}";
+
+                var containerMethods = GetMethods(benchmarksContainerType);
+
+                var conventionBasedInitContainerMethods = containerMethods
+                    .Where(m =>
+                        m.Name.Equals(genericConventionName, StringComparison.InvariantCultureIgnoreCase) ||
+                        m.Name.Equals(typedConventionName, StringComparison.InvariantCultureIgnoreCase))
+                    .ToList();
+
+                if (conventionBasedInitContainerMethods.Count > 1)
+                    throw new InvalidOperationException($"Multiple container initialization methods found using conventions.");
+
+                initContainerMethodInfo = conventionBasedInitContainerMethods.FirstOrDefault();
+            }
+
+            return initContainerMethodInfo; // Can be null
         }
 
         #endregion
