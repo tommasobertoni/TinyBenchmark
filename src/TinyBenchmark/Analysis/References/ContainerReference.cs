@@ -22,8 +22,8 @@ namespace TinyBenchmark.Analysis
             InitReference initContainer,
             ParametersSetCollection parametersSetCollection)
         {
-            this.ContainerType = benchmarksContainerType;
-            this.Name = name;
+            this.ContainerType = benchmarksContainerType ?? throw new ArgumentNullException(nameof(benchmarksContainerType));
+            this.Name = name ?? throw new ArgumentNullException(nameof(name));
             this.InitContainer = initContainer;
             this.ParametersSetCollection = parametersSetCollection;
         }

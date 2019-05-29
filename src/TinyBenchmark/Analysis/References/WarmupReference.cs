@@ -19,9 +19,9 @@ namespace TinyBenchmark.Analysis
             int order,
             MethodInfo method)
         {
-            this.Name = name;
+            this.Name = name ?? throw new ArgumentNullException(nameof(name));
             this.Order = order;
-            this.Method = method;
+            this.Method = method ?? throw new ArgumentNullException(nameof(method));
         }
     }
 }

@@ -10,10 +10,9 @@ namespace TinyBenchmark.Analysis
     {
         public MethodInfo Method { get; }
 
-        public InitReference(
-            MethodInfo method)
+        public InitReference(MethodInfo method)
         {
-            this.Method = method;
+            this.Method = method ?? throw new ArgumentNullException(nameof(method));
         }
     }
 }
