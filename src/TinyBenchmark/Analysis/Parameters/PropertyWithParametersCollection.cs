@@ -20,8 +20,8 @@ namespace TinyBenchmark.Analysis
 
         public PropertyWithParametersCollection(PropertyInfo property, ParamAttribute attribute)
         {
-            this.Property = property;
-            this.Attribute = attribute;
+            this.Property = property ?? throw new ArgumentNullException(nameof(property));
+            this.Attribute = attribute ?? throw new ArgumentNullException(nameof(attribute));
         }
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
