@@ -8,8 +8,8 @@
 
 _Define benchmarks with ease!_
 
-TinyBenchmark provides a simple set of APIs that enable you to test the time of execution of
-different methods and comparison between each other.
+TinyBenchmark provides a simple set of APIs that enable you to inspect the execution time of
+different methods and compare them between each other.
 
 _**Usage**_
   - [Run your first benchmark](#run-your-first-benchmark)
