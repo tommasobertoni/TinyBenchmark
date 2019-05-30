@@ -108,12 +108,14 @@ namespace TinyBenchmark.Analysis
                 // Verify parameters type.
                 foreach (var paramValue in attribute.Values)
                 {
-                    if (paramValue == null && property.PropertyType.IsValueType)
-                        throw new InvalidOperationException(
-                            $"Cannot assign null to the property {property.DeclaringType.Name}.{property.Name} " +
-                            $"of type {property.PropertyType.Name}.");
-
-                    if (!property.PropertyType.IsAssignableFrom(paramValue.GetType()))
+                    if (paramValue == null)
+                    {
+                        if (property.PropertyType.IsValueType)
+                            throw new InvalidOperationException(
+                                $"Cannot assign null to the property {property.DeclaringType.Name}.{property.Name} " +
+                                $"of type {property.PropertyType.Name}.");
+                    }
+                    else if (!property.PropertyType.IsAssignableFrom(paramValue.GetType()))
                         throw new InvalidOperationException(
                             $"Cannot associate a value of type {paramValue.GetType().Name} to the property " +
                             $"{property.DeclaringType.Name}.{property.Name} of type {property.PropertyType.Name}.");

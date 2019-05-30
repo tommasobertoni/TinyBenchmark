@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using TinyBenchmark.Analysis;
 using TinyBenchmark.Attributes;
-using TinyBenchmark.Tests;
 
-namespace Analysis
+namespace Analysis.ReferenceConstructors.Container
 {
     /// <summary>
     /// InitContainer can be identified with:
@@ -21,18 +20,16 @@ namespace Analysis
         [Test]
         public void ContainerWithoutInitIsAllowed()
         {
-            var type = typeof(ContainerWithoutInit);
             var refConstructor = new ContainerReferenceConstructor(useConventions: true);
-            var initContainer = refConstructor.TryCreateInitContainerReference(type);
+            var initContainer = refConstructor.TryCreateInitContainerReference(typeof(ContainerWithoutInit));
             Assert.That(initContainer, Is.Null);
         }
 
         [Test]
         public void InitContainerAttributeIsFound()
         {
-            var type = typeof(ContainerWithInitAttribute);
             var refConstructor = new ContainerReferenceConstructor(useConventions: true);
-            var initRef = refConstructor.TryCreateInitContainerReference(type);
+            var initRef = refConstructor.TryCreateInitContainerReference(typeof(ContainerWithInitAttribute));
             Assert.That(initRef?.Method, Is.Not.Null);
             Assert.That(initRef.Method.Name, Is.EqualTo(nameof(ContainerWithInitAttribute.TheContainerInitializationMethod)));
         }
@@ -40,21 +37,35 @@ namespace Analysis
         [Test]
         public void DefaultConventionIsFound()
         {
-            var type = typeof(ContainerWithDefaultInitConvention);
             var refConstructor = new ContainerReferenceConstructor(useConventions: true);
-            var initRef = refConstructor.TryCreateInitContainerReference(type);
+            var initRef = refConstructor.TryCreateInitContainerReference(typeof(ContainerWithDefaultInitConvention));
             Assert.That(initRef?.Method, Is.Not.Null);
             Assert.That(initRef.Method.Name, Is.EqualTo(nameof(ContainerWithDefaultInitConvention.InitContainer)));
         }
 
         [Test]
+        public void DefaultConventionIsNotFoundBySetup()
+        {
+            var refConstructor = new ContainerReferenceConstructor(useConventions: false);
+            var initRef = refConstructor.TryCreateInitContainerReference(typeof(ContainerWithDefaultInitConvention));
+            Assert.That(initRef?.Method, Is.Null);
+        }
+
+        [Test]
         public void NamedConventionIsFound()
         {
-            var type = typeof(ContainerWithNamedInitConvention);
             var refConstructor = new ContainerReferenceConstructor(useConventions: true);
-            var initRef = refConstructor.TryCreateInitContainerReference(type);
+            var initRef = refConstructor.TryCreateInitContainerReference(typeof(ContainerWithNamedInitConvention));
             Assert.That(initRef?.Method, Is.Not.Null);
             Assert.That(initRef.Method.Name, Is.EqualTo(nameof(ContainerWithNamedInitConvention.InitContainerWithNamedInitConvention)));
+        }
+
+        [Test]
+        public void NamedConventionIsNotFoundBySetup()
+        {
+            var refConstructor = new ContainerReferenceConstructor(useConventions: false);
+            var initRef = refConstructor.TryCreateInitContainerReference(typeof(ContainerWithNamedInitConvention));
+            Assert.That(initRef?.Method, Is.Null);
         }
 
         [Test]
@@ -75,9 +86,8 @@ namespace Analysis
         [Test]
         public void InitContainerAttributeHasPriorityOverConventions()
         {
-            var type = typeof(ContainerWithBothAttributeAndConventions);
             var refConstructor = new ContainerReferenceConstructor(useConventions: true);
-            var initRef = refConstructor.TryCreateInitContainerReference(type);
+            var initRef = refConstructor.TryCreateInitContainerReference(typeof(ContainerWithBothAttributeAndConventions));
             Assert.That(initRef?.Method, Is.Not.Null);
             Assert.That(initRef.Method.Name, Is.EqualTo(nameof(ContainerWithBothAttributeAndConventions.TheContainerInitializationMethod)));
         }
