@@ -23,8 +23,17 @@ namespace TinyBenchmark.Analysis
 
         public void Add(PropertyInfo property, object value)
         {
-            if (value != null && !property.PropertyType.IsAssignableFrom(value.GetType()))
-                throw new ArgumentException($"Cannot assign a value of type {value.GetType().Name} to a property of type {property.PropertyType.Name}, property {property.Name}, value {value}");
+            if (value == null)
+            {
+                if (property.PropertyType.IsValueType)
+                    throw new InvalidOperationException(
+                        $"Cannot assign null to the property {property.DeclaringType.Name}.{property.Name} " +
+                        $"of type {property.PropertyType.Name}.");
+            }
+            else if (!property.PropertyType.IsAssignableFrom(value.GetType()))
+                throw new ArgumentException(
+                    $"Cannot assign a value of type {value.GetType().Name} to a property " +
+                    $"of type {property.PropertyType.Name}, property {property.Name}, value {value}");
 
             if (_valuesMap.ContainsKey(property.Name))
                 throw new ArgumentException($"Cannot add another property value in this parameters set to the property {property.Name}");
