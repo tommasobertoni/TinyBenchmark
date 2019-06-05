@@ -135,6 +135,30 @@ namespace Analysis.ReferenceConstructors.Container
         }
 
         [Test]
+        public void ParamsWithConvertibleTypesAreFound()
+        {
+            var refConstructor = new ContainerReferenceConstructor(useConventions: true);
+            var paramsSetCollection = refConstructor.GetParametersSetCollection(typeof(ContainerWithConvertibleTypes));
+            Assert.That(paramsSetCollection, Is.Not.Null);
+            Assert.That(paramsSetCollection, Is.Not.Empty);
+
+            var parametersSetsList = paramsSetCollection.ToList();
+            Assert.That(parametersSetsList, Has.Count.EqualTo(6));
+
+            var expectedParameters = new[] { 1m, 10m, 100.1m, 100.2m, 1000.5m, default(decimal?) };
+
+            for (int i = 0; i < expectedParameters.Length; i++)
+            {
+                var expected = expectedParameters[i];
+                var parametersSet = parametersSetsList[i]?.ToList();
+                Assert.That(parametersSet, Is.Not.Null);
+                Assert.That(parametersSet, Has.Count.EqualTo(1));
+                Assert.That(parametersSet[0].Key, Is.EqualTo(nameof(ContainerWithConvertibleTypes.Score)));
+                Assert.That(parametersSet[0].Value, Is.EqualTo(expected));
+            }
+        }
+
+        [Test]
         public void PropertoesMustBeWritable()
         {
             var refConstructor = new ContainerReferenceConstructor(useConventions: true);
@@ -190,7 +214,7 @@ namespace Analysis.ReferenceConstructors.Container
 
                 var parameters = parametersSet.ToList();
                 Assert.That(parameters, Is.Not.Null);
-                Assert.That(parameters, Has.Count.EqualTo(3));
+                Assert.That(parameters, Has.Count.EqualTo(4));
 
                 Assert.That(parameters[0].Key, Is.EqualTo(nameof(container.Count)));
                 Assert.That(parameters[0].Value, Is.EqualTo(container.Count));
@@ -238,8 +262,14 @@ namespace Analysis.ReferenceConstructors.Container
 
     internal class ContainerWithWrongType
     {
-        [Param("1", "10", "100", "1000")]
+        [Param(null, 'a', "abcd")]
         public int Count { get; set; }
+    }
+
+    internal class ContainerWithConvertibleTypes
+    {
+        [Param(1, 10L, 100.1D, 100.2F, "1000.5", null)]
+        public decimal? Score { get; set; }
     }
 
     internal class ContainerWithReadonlyProperty
@@ -262,8 +292,6 @@ namespace Analysis.ReferenceConstructors.Container
 
     internal class FullContainer
     {
-        const decimal abc = 123;
-
         [Param(1, 10, 100, 1000)]
         public int Count { get; set; }
 
@@ -272,6 +300,9 @@ namespace Analysis.ReferenceConstructors.Container
 
         [Param(10L, null)]
         public long? Id { get; set; }
+
+        [Param(1, 10L, 100.1D, 100.2F, "1000.5", null)]
+        public decimal? Score { get; set; }
     }
 
     #endregion

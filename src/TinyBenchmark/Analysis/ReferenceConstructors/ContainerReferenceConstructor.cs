@@ -12,10 +12,12 @@ namespace TinyBenchmark.Analysis
         public bool UseConventions { get; }
 
         private readonly TypeInfoExtractor _tExtractor;
+        private readonly TypeTransformer _typeTransformer;
 
         internal ContainerReferenceConstructor(bool useConventions = true)
         {
             _tExtractor = new TypeInfoExtractor();
+            _typeTransformer = new TypeTransformer();
             this.UseConventions = useConventions;
         }
 
@@ -108,21 +110,8 @@ namespace TinyBenchmark.Analysis
                 // Verify parameters type.
                 foreach (var paramValue in attribute.Values)
                 {
-                    if (paramValue == null)
-                    {
-                        if (property.PropertyType.IsValueType)
-                        {
-                            var underlyingType = Nullable.GetUnderlyingType(property.PropertyType);
-                            if (underlyingType == null)
-                                throw new InvalidOperationException(
-                                    $"Cannot assign null to the property {property.DeclaringType.Name}.{property.Name} " +
-                                    $"of type {property.PropertyType.Name}.");
-                        }
-                    }
-                    else if (!property.PropertyType.IsAssignableFrom(paramValue.GetType()))
-                        throw new InvalidOperationException(
-                            $"Cannot associate a value of type {paramValue.GetType().Name} to the property " +
-                            $"{property.DeclaringType.Name}.{property.Name} of type {property.PropertyType.Name}.");
+                    _typeTransformer.EnsureIsCompatible(paramValue, property.PropertyType,
+                        errorInfo: $"Property {property.DeclaringType.Name}.{property.Name}.");
                 }
 
                 var propertyParametersCollection = new PropertyWithParametersCollection(property, attribute);

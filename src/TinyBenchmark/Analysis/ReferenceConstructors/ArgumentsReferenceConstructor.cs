@@ -10,8 +10,11 @@ namespace TinyBenchmark.Analysis
 {
     internal class ArgumentsReferenceConstructor
     {
+        private readonly TypeTransformer _typeTransformer;
+
         internal ArgumentsReferenceConstructor()
         {
+            _typeTransformer = new TypeTransformer();
         }
 
         internal IReadOnlyList<ArgumentsReference> TryCreateArgumentsReferences(MethodInfo method)
@@ -44,19 +47,13 @@ namespace TinyBenchmark.Analysis
                 var arg = arguments[i];
                 var methodArgument = expectedMethodArguments[i];
 
-                if (arg == null)
-                {
-                    if (methodArgument.ParameterType.IsValueType)
-                    {
-                        var underlyingType = Nullable.GetUnderlyingType(methodArgument.ParameterType);
-                        if (underlyingType == null)
-                            throw ArgumentNullCannotBeAssignedToValueType(arguments, methodArgument);
-                    }
-                }
-                else if (!methodArgument.ParameterType.IsAssignableFrom(arg.GetType()))
-                    throw ArgumentTypesDoNotMatch(arguments, expected: methodArgument.GetType(), actual: arg.GetType());
+                _typeTransformer.EnsureIsCompatible(arg, methodArgument.ParameterType,
+                    errorInfo: GetExceptionPrefix(arguments));
 
-                argumentsReference.Add(methodArgument.Name, arg);
+                var safeArgument = _typeTransformer.ConvertFor(arg, methodArgument.ParameterType,
+                    errorInfo: GetExceptionPrefix(arguments));
+
+                argumentsReference.Add(methodArgument.Name, safeArgument);
             }
 
             return argumentsReference;

@@ -55,30 +55,20 @@ namespace Analysis.Parameters
             var prefixProp = type.GetProperty(nameof(ContainerWithProperties.Prefix));
             var itemProp = type.GetProperty(nameof(ContainerWithProperties.Item));
 
-            {
-                var pset = new ParametersSet();
-                Assert.That(() => pset.Add(countProp, 1), Throws.Nothing);
-                Assert.That(() => pset.Add(prefixProp, "Mr."), Throws.Nothing);
-                Assert.That(() => pset.Add(itemProp, new object()), Throws.Nothing);
-            }
-
-            {
-                var pset = new ParametersSet();
-                Assert.That(() => pset.Add(prefixProp, string.Empty), Throws.Nothing);
-                Assert.That(() => pset.Add(itemProp, null), Throws.Nothing);
-            }
-
-            {
-                var pset = new ParametersSet();
-                Assert.That(() => pset.Add(prefixProp, null), Throws.Nothing);
-                Assert.That(() => pset.Add(itemProp, "Mr."), Throws.Nothing);
-            }
-
-            {
-                var pset = new ParametersSet();
-                Assert.That(() => pset.Add(countProp, "1"), Throws.Exception);
-                Assert.That(() => pset.Add(countProp, null), Throws.Exception);
-            }
+            Assert.That(() => new ParametersSet().Add(countProp, 1), Throws.Nothing);
+            Assert.That(() => new ParametersSet().Add(prefixProp, "Mr."), Throws.Nothing);
+            Assert.That(() => new ParametersSet().Add(itemProp, new object()), Throws.Nothing);
+            Assert.That(() => new ParametersSet().Add(prefixProp, string.Empty), Throws.Nothing);
+            Assert.That(() => new ParametersSet().Add(itemProp, null), Throws.Nothing);
+            Assert.That(() => new ParametersSet().Add(prefixProp, null), Throws.Nothing);
+            Assert.That(() => new ParametersSet().Add(itemProp, "Mr."), Throws.Nothing);
+            Assert.That(() => new ParametersSet().Add(countProp, "a"), Throws.Exception);
+            Assert.That(() => new ParametersSet().Add(countProp, null), Throws.Exception);
+            Assert.That(() => new ParametersSet().Add(countProp, 1), Throws.Nothing);
+            Assert.That(() => new ParametersSet().Add(countProp, "1"), Throws.Nothing);
+            Assert.That(() => new ParametersSet().Add(countProp, 1L), Throws.Nothing);
+            Assert.That(() => new ParametersSet().Add(countProp, 1.0d), Throws.Nothing);
+            Assert.That(() => new ParametersSet().Add(countProp, 1.0f), Throws.Nothing);
         }
 
         [Test]
