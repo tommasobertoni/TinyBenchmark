@@ -76,9 +76,8 @@ namespace Analysis.Parameters
 
             {
                 var pset = new ParametersSet();
-                Assert.That(() => pset.Add(countProp, 1L), Throws.Exception);
+                Assert.That(() => pset.Add(countProp, "1"), Throws.Exception);
                 Assert.That(() => pset.Add(countProp, null), Throws.Exception);
-                Assert.That(() => pset.Add(prefixProp, 1), Throws.Exception);
             }
         }
 
@@ -177,6 +176,12 @@ namespace Analysis.Parameters
                 Assert.That(parametersList[2].Key, Is.EqualTo(nameof(ContainerWithProperties.Item)));
                 Assert.That(parametersList[2].Value, Is.EqualTo(new DateTime(1990, 01, 01)));
             }
+        }
+
+        [Test]
+        public void ParametersSetCanBeAppliedToContainer()
+        {
+
         }
     }
 

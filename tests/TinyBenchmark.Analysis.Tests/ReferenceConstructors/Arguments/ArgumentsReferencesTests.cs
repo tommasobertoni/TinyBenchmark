@@ -142,7 +142,7 @@ namespace Analysis.ReferenceConstructors.Arguments
 
     internal class ContainerWithCompatibleArgumentTypes
     {
-        [Arguments(1000, "Mr.")]
+        [Arguments(1000L, "Mr.")]
         public void Method(long id, object item) { }
     }
 

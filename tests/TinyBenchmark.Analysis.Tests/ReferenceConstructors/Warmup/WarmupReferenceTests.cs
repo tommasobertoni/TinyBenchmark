@@ -130,8 +130,8 @@ namespace Analysis.ReferenceConstructors.Warmup
 
         public void SecondReadyMethod() { }
 
-        [WarmupWith(nameof(ReadyMethod), Order = 1)]
         [WarmupWith(nameof(SecondReadyMethod), Order = 99)]
+        [WarmupWith(nameof(ReadyMethod), Order = 1)]
         public void Method() { }
     }
 
