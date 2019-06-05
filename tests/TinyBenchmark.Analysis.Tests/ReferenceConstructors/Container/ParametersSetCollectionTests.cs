@@ -171,6 +171,35 @@ namespace Analysis.ReferenceConstructors.Container
             var refConstructor = new ContainerReferenceConstructor(useConventions: true);
             Assert.That(() => refConstructor.GetParametersSetCollection(typeof(ContainerWithWrongDefaultType)), Throws.Exception);
         }
+
+        [Test]
+        public void ParametersSetsCanBeAppliedToTheContainer()
+        {
+            var refConstructor = new ContainerReferenceConstructor(useConventions: true);
+            var paramsSetCollection = refConstructor.GetParametersSetCollection(typeof(FullContainer));
+            Assert.That(paramsSetCollection, Is.Not.Null);
+            Assert.That(paramsSetCollection, Is.Not.Empty);
+
+            foreach (var parametersSet in paramsSetCollection)
+            {
+                var container = new FullContainer();
+                Assert.That(container.Count, Is.EqualTo(default(int)));
+                Assert.That(container.Prefix, Is.EqualTo(default(string)));
+
+                Assert.That(() => parametersSet.ApplyTo(container), Throws.Nothing);
+
+                var parameters = parametersSet.ToList();
+                Assert.That(parameters, Is.Not.Null);
+                Assert.That(parameters, Has.Count.EqualTo(3));
+
+                Assert.That(parameters[0].Key, Is.EqualTo(nameof(container.Count)));
+                Assert.That(parameters[0].Value, Is.EqualTo(container.Count));
+                Assert.That(parameters[1].Key, Is.EqualTo(nameof(container.Prefix)));
+                Assert.That(parameters[1].Value, Is.EqualTo(container.Prefix));
+                Assert.That(parameters[2].Key, Is.EqualTo(nameof(container.Id)));
+                Assert.That(parameters[2].Value, Is.EqualTo(container.Id));
+            }
+        }
     }
 
     #region Test types
@@ -229,6 +258,20 @@ namespace Analysis.ReferenceConstructors.Container
     {
         [Param(null)]
         public int Count { get; set; }
+    }
+
+    internal class FullContainer
+    {
+        const decimal abc = 123;
+
+        [Param(1, 10, 100, 1000)]
+        public int Count { get; set; }
+
+        [Param("foo", "bar", "baz")]
+        public string Prefix { get; set; }
+
+        [Param(10L, null)]
+        public long? Id { get; set; }
     }
 
     #endregion
