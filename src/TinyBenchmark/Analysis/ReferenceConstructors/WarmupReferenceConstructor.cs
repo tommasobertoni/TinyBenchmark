@@ -74,7 +74,7 @@ namespace TinyBenchmark.Analysis
                 }
             }
 
-            return warmupReferences.Any() ? warmupReferences.AsReadOnly() : null; // Return null when empty.
+            return warmupReferences.Any() ? warmupReferences?.OrderBy(w => w.Order).ToList().AsReadOnly() : null; // Return null when empty.
         }
 
         internal WarmupReference TryCreateWarmupReference(Type benchmarksContainerType, WarmupWithAttribute attr)

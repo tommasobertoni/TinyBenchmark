@@ -24,8 +24,8 @@ namespace TinyBenchmark.Analysis
         internal IReadOnlyList<BenchmarkReference> TryCreateBenchmarkReferences(Type benchmarksContainerType)
         {
             var benchmarks = _tExtractor.GetMethodsWithAttribute<BenchmarkAttribute>(benchmarksContainerType);
-            var benchmarkReferences = benchmarks.Select(x => CreateBenchmarkReference(x.method, x.attribute)).ToList();
-            return benchmarkReferences.AsReadOnly();
+            var benchmarkReferences = benchmarks?.Select(x => CreateBenchmarkReference(x.method, x.attribute));
+            return benchmarkReferences?.OrderBy(b => b.Order)?.ToList()?.AsReadOnly();
         }
 
         internal BenchmarkReference CreateBenchmarkReference(MethodInfo method, BenchmarkAttribute attribute)
@@ -34,7 +34,7 @@ namespace TinyBenchmark.Analysis
 
             var warmupRefCtor = new WarmupReferenceConstructor(_output, this.UseConventions);
             var warmupCollection = warmupRefCtor.TryCreateWarmupReferences(method);
-            var orderedWarmupCollection = warmupCollection.OrderBy(w => w.Order);
+            var orderedWarmupCollection = warmupCollection?.OrderBy(w => w.Order);
 
             var argumentsRefCtor = new ArgumentsReferenceConstructor();
             var argumentsCollection = argumentsRefCtor.TryCreateArgumentsReferences(method);
@@ -45,6 +45,7 @@ namespace TinyBenchmark.Analysis
 
             var reference = new BenchmarkReference(
                 attribute.Name ?? method.Name,
+                attribute.Order,
                 initWithReference,
                 orderedWarmupCollection,
                 argumentsCollection,

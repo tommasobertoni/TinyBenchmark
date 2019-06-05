@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace TinyBenchmark.Analysis
         internal IReadOnlyList<ArgumentsReference> TryCreateArgumentsReferences(MethodInfo method)
         {
             var argumentsAttributes = method.GetCustomAttributes<ArgumentsAttribute>();
-            if (argumentsAttributes == null) return null;
+            if (argumentsAttributes?.Any() != true) return null;
 
             var argumentsReferences = argumentsAttributes.Select(a => CreateArgumentsReference(method, a)).ToList();
             return argumentsReferences.AsReadOnly();
@@ -44,9 +45,15 @@ namespace TinyBenchmark.Analysis
                 var methodArgument = expectedMethodArguments[i];
 
                 if (arg == null)
-                    throw ArgumentNullCannotBeAssignedToValueType(arguments, methodArgument);
-
-                if (!methodArgument.ParameterType.IsAssignableFrom(arg.GetType()))
+                {
+                    if (methodArgument.ParameterType.IsValueType)
+                    {
+                        var underlyingType = Nullable.GetUnderlyingType(methodArgument.ParameterType);
+                        if (underlyingType == null)
+                            throw ArgumentNullCannotBeAssignedToValueType(arguments, methodArgument);
+                    }
+                }
+                else if (!methodArgument.ParameterType.IsAssignableFrom(arg.GetType()))
                     throw ArgumentTypesDoNotMatch(arguments, expected: methodArgument.GetType(), actual: arg.GetType());
 
                 argumentsReference.Add(methodArgument.Name, arg);
@@ -56,7 +63,7 @@ namespace TinyBenchmark.Analysis
 
             // Local functions
 
-            string ToString(IEnumerable<object> args) => string.Join(", ", args.Select(x => x.ToString()));
+            string ToString(IEnumerable<object> args) => string.Join(", ", args.Select(x => x?.ToString()));
 
             string GetExceptionPrefix(IEnumerable<object> args) =>
                 $"Mismatching arguments on method {method.DeclaringType.Name}.{method.Name}, arguments: {ToString(args)}";

@@ -111,9 +111,13 @@ namespace TinyBenchmark.Analysis
                     if (paramValue == null)
                     {
                         if (property.PropertyType.IsValueType)
-                            throw new InvalidOperationException(
-                                $"Cannot assign null to the property {property.DeclaringType.Name}.{property.Name} " +
-                                $"of type {property.PropertyType.Name}.");
+                        {
+                            var underlyingType = Nullable.GetUnderlyingType(property.PropertyType);
+                            if (underlyingType == null)
+                                throw new InvalidOperationException(
+                                    $"Cannot assign null to the property {property.DeclaringType.Name}.{property.Name} " +
+                                    $"of type {property.PropertyType.Name}.");
+                        }
                     }
                     else if (!property.PropertyType.IsAssignableFrom(paramValue.GetType()))
                         throw new InvalidOperationException(
