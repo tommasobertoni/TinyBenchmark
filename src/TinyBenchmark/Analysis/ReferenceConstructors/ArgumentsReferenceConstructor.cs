@@ -70,12 +70,6 @@ namespace TinyBenchmark.Analysis
 
             InvalidOperationException ArgumentsCountDoNotMatch(IEnumerable<object> args, int expected, int actual) => new InvalidOperationException(
                 $"{GetExceptionPrefix(args)}: expected {expected} arguments but {actual} arguments were provided.");
-
-            InvalidOperationException ArgumentNullCannotBeAssignedToValueType(IEnumerable<object> args, ParameterInfo argumentInfo) => new InvalidOperationException(
-                $"{GetExceptionPrefix(args)}: cannot assign null to the argument {argumentInfo.Name} of type {argumentInfo.ParameterType.Name}.");
-
-            InvalidOperationException ArgumentTypesDoNotMatch(IEnumerable<object> args, Type expected, Type actual) => new InvalidOperationException(
-                $"{GetExceptionPrefix(args)}: expected {expected.Name} but {actual.Name} was provided.");
         }
     }
 }
